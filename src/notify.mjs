@@ -22,7 +22,7 @@ function verbalAlert() {
         app.includeStandardAdditions = true;
         app.say(toSay);
       } catch (e) {
-        console.log(e);
+        console.log('Error in verbalAlerts()', e);
       }
     }, dialog);
   }, pauseBetweenBarksSeconds * 1000);
@@ -46,7 +46,7 @@ export function askMeetingQuestions() {
         {timeout: 3},
       );
     } catch (e) {
-      console.log(e);
+      console.log('Error in askMeetingQuestions', e);
     }
   }, meetingQuestions);
 }
@@ -80,7 +80,7 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
       );
       resolve(response);
     } catch (e) {
-      console.log(e);
+      console.log('Error in showAlert()', e);
       reject(e);
     }
   });

@@ -44,7 +44,7 @@ export async function syncCalendarsToUpcoming() {
           return checkEventsInCalendar(calendar, attempts + 1);
         }
 
-        console.log(e);
+        console.log(`in checkEventsInCalendar()`, e);
         return newEvents;
       }
     }

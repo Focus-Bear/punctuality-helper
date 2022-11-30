@@ -11,7 +11,7 @@ export async function showMeeting(calendar, uid) {
           event = events[0];
         event.show();
       } catch (e) {
-        console.log(e);
+        console.log('Error in showMeeting():', e);
       }
     },
     calendar,
@@ -33,7 +33,7 @@ export async function openMeetingURL(url) {
       window.tabs.push(newTab);
       window.currentTab = newTab;
     } catch (e) {
-      console.log(e);
+      console.log('Error in openMeetingURL() :', e);
     }
   }, url);
 }
