@@ -26,9 +26,15 @@ There are two core cycles in play:
 2. First is to check iCal and save all meetings occuring in the next 30 minutes to a local, in-memory list. This is goverened by **slowNapDurationMinutes**
 3. Second is to check the upcoming, in-memory list for any immiment meetings and notify. This is goverened by **quickNapDurationMinutes**
 
+## Key variables
 ```const lookaheadMinutes = 2, // how long before a meeting should I notify?
 slowNapDurationMinutes = 5, // how often should I look for meetings in iCal?
 quickNapDurationMinutes = 0.5, // how often should I check the in-memory list of upcoming
 pauseBetweenBarksSeconds = 5, // how many seconds does each line of dialog have to itself
 calsToExclude = [], // array of strings, names of calendars
 ```
+
+## Further Reading / Helpful JXA Resources
+ 
+ * https://github.com/JXA-Cookbook/JXA-Cookbook/wiki
+ * https://developer.apple.com/library/archive/releasenotes/InterapplicationCommunication/RN-JavaScriptForAutomation/Articles/Introduction.html
