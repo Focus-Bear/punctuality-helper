@@ -1,9 +1,10 @@
-import {run} from '@jxa/run';
+import { run } from '@jxa/run';
 import {setUpcoming, addEvent, calsToExclude} from '../index.mjs';
 
 export async function syncCalendarsToUpcoming() {
-  console.log('Checking iCal..');
   const upcoming = await run(calsToExclude => {
+    console.log('Checking iCal..');
+
     function parseEvent(evt) {
       return {
         uid: evt.uid(),
@@ -20,7 +21,11 @@ export async function syncCalendarsToUpcoming() {
       let name;
       try {
         name = calendar.name();
-        if (calsToExclude.includes(name)) return [];
+        if (calsToExclude.some((calToExclude) => name.toLowerCase().includes(calToExclude.toLowerCase()))) {
+          console.log('Skipping ', name);
+          return [];
+        }
+        console.log('Checking', name, now, until);
 
         const evts = calendar.events.whose({
           _and: [
@@ -73,5 +78,6 @@ export async function syncCalendarsToUpcoming() {
     console.log('Done checking calendars..');
     return events;
   }, calsToExclude);
+  console.log('Finished checking');
   setUpcoming(upcoming);
 }
