@@ -22,7 +22,6 @@ async function listCalendars(excludedCalendars) {
     return output;
   }, excludedCalendars);
 
-  console.log('included calendars', calendars);
   return calendars;
 }
 
@@ -96,15 +95,15 @@ const checkEventsInCalendar = (calendar, since, until) => {};
 
 (async () => {
   const {since, until} = await getRange(),
-    cals = await listCalendars(calsToExclude),
+    calsToCheck = await listCalendars(calsToExclude),
     upcoming = [];
 
-  // hack for now because listCalendars doesn't work
-  const calsToCheck = ["jeremy@focusbear.io","Calendar","Untitled Folder","Nuanced IT","jeremymnagel@gmail.com"];
-  console.log('Cals', calsToCheck);
   for (const cal of calsToCheck) {
-    console.log('100', cal, since, until);
+    const executionStartTime = new Date();
+    console.log('Checking', cal, since, until);
     const newEvents = await checkCalendar(cal, since, until);
+    const executionDuration = (new Date() - executionStartTime) / 1000;
+    console.log(`Took ${executionDuration} seconds to check ${cal}`);
     upcoming.push(...newEvents);
   }
   console.log(upcoming);
