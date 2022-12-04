@@ -1,7 +1,9 @@
-import {run} from '@jxa/run';
+import { run } from '@jxa/run';
 
-async function listCalendars() {
-  return await run(() => {
+const calsToExclude = ['Birthday', 'Holiday', 'Contacts', 'siri', 'my proposed times'];
+
+async function listCalendars(excludedCalendars) {
+  const calendars = await run((excludedCalendars) => {
     const app = Application.currentApplication(),
       {calendars} = Application('Calendar');
 
@@ -10,12 +12,18 @@ async function listCalendars() {
     const output = [];
 
     for (let i = 0; i < calendars.length; i++) {
-      const cal = calendars[i],
-        name = cal.name();
-      output.push(name);
+      const cal = calendars[i];
+      const name = cal.name();
+      const shouldCheckCalendar = !excludedCalendars.some((calToExclude) => name.toLowerCase().includes(calToExclude.toLowerCase()))
+      if (shouldCheckCalendar) {
+        output.push(name);
+      }
     }
     return output;
-  });
+  }, excludedCalendars);
+
+  console.log('included calendars', calendars);
+  return calendars;
 }
 
 async function getRange() {
@@ -88,11 +96,14 @@ const checkEventsInCalendar = (calendar, since, until) => {};
 
 (async () => {
   const {since, until} = await getRange(),
-    cals = await listCalendars(),
+    cals = await listCalendars(calsToExclude),
     upcoming = [];
 
-  for (const cal of cals) {
-    console.log(cal, since, until);
+  // hack for now because listCalendars doesn't work
+  const calsToCheck = ["jeremy@focusbear.io","Calendar","Untitled Folder","Nuanced IT","jeremymnagel@gmail.com"];
+  console.log('Cals', calsToCheck);
+  for (const cal of calsToCheck) {
+    console.log('100', cal, since, until);
     const newEvents = await checkCalendar(cal, since, until);
     upcoming.push(...newEvents);
   }
