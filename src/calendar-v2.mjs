@@ -63,24 +63,34 @@ async function getEvents() {
     return output
 `;
   const rawEvents = await exec(script);
-  return rawEvents.filter(e => e.length).map(evt => {
-    const [summary, start_date, end_date, url, location, description, id] = evt;
+  return rawEvents
+    .filter(e => e.length)
+    .map(evt => {
+      const [
+        summary,
+        start_date,
+        end_date,
+        url,
+        location,
+        description,
+        id,
+      ] = evt;
 
-    return {
-      summary,
-      start_date,
-      end_date,
-      url,
-      location,
-      description,
-      id,
-    };
-  });
+      return {
+        summary,
+        start_date,
+        end_date,
+        url,
+        location,
+        description,
+        id,
+      };
+    });
 }
 
 async function main() {
-  const cals = await getCalendars();
-  const events = await getEvents();
+  const cals = await getCalendars(),
+    events = await getEvents();
   console.log(cals, events);
 }
 
