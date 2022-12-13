@@ -22,10 +22,9 @@ export async function syncCalendarsToUpcoming() {
       try {
         name = calendar.name();
         if (calsToExclude.some((calToExclude) => name.toLowerCase().includes(calToExclude.toLowerCase()))) {
-          console.log('Skipping ', name);
           return [];
         }
-        console.log('Checking', name, now, until);
+        const startTimestamp = new Date();
 
         const evts = calendar.events.whose({
           _and: [
@@ -33,20 +32,21 @@ export async function syncCalendarsToUpcoming() {
             { startDate: { _lessThan: until } },
           ],
         });
-        if (!evts?.length) return [];
 
         for (let j = 0; j < evts.length; j++) {
           const evt = { ...parseEvent(evts[j]), calendar: name };
           newEvents.push(evt);
         }
-        console.log(`Found ${evts.length} events in calendar ${name}`);
+
+        const elapsedTime = (new Date() - startTimestamp) / 1000;
+        console.log(`Took ${elapsedTime} seconds and found ${evts.length} events in calendar ${name}`);
 
         return newEvents;
       } catch (e) {
 
         if (attempts < 3) {
           console.log('Retrying ', name, 1)
-          return checkEventsInCalendar(calendar, attempts + 1);
+          return checkEventsInCalendar(calendar, now, until, attempts + 1);
         }
 
         console.log(`in checkEventsInCalendar()`, e);

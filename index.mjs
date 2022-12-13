@@ -10,7 +10,7 @@ export const lookaheadMinutes = 2, // how long before a meeting should I notify?
   pauseBetweenBarksSeconds = 5, // how many seconds does each line of dialog have to itself
   // Checking calendars is slow so exclude any that don't contain events you care about.
   // It can be a partial match and it's case insensitive. e.g. Holiday will match "UK holidays"
-  calsToExclude = ['Birthday', 'Holiday', 'Contacts'],
+  calsToExclude = ['Birthday', 'Holiday', 'Contacts', 'jeremymnagel@gmail.com', 'Nuanced IT'],
   testing = process.env.NODE_ENV == 'test';
 
 export const dialogStages = [
