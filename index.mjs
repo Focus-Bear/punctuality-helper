@@ -44,7 +44,6 @@ export let upcoming = [],
   busy = false;
 
 export function setUpcoming(evts) {
-		console.log("setting upcoming to", evts)
   upcoming = evts;
 }
 
