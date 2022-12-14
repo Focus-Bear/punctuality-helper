@@ -1,5 +1,7 @@
 import applescript from 'applescript';
 
+import {setUpcoming, addEvent, calsToExclude} from '../index.mjs';
+
 const header = `
 		use AppleScript version "2.4" -- Yosemite (10.10) or later
 	   	use framework "Foundation"
@@ -36,62 +38,83 @@ async function getCalendars() {
 
   return await exec(script);
 }
-
+function tidyDate(date) {
+  return new Date(
+    date
+      .split(',')
+      .slice(1)
+      .join(',')
+      .replace(' at', ''),
+  );
+}
 async function getEvents() {
   const script = `
-    set theCals to fetch calendars {} event store theStore
+        set theCals to fetch calendars {} event store theStore
+		set d1 to (current date)
+		set d2 to d1 + 1 * hours
+		set theEvents to fetch events starting date d1 ending date d2 searching cals theCals event store theStore
 
-   	set d1 to (current date)
-   	set d2 to d1 + 1 * hours
-   	set theEvents to fetch events starting date d1 ending date d2 searching cals theCals event store theStore
+		set output to {}
 
-	set output to {}
-
-   	repeat with anEvent in theEvents
-		set current to {}
-   		try
-		    copy event_summary of (event info for event anEvent) as text to end of current
-		    copy event_start_date of (event info for event anEvent) as text to end of current
-		    copy event_end_date of  (event info for event anEvent) as text to end of current
-			copy event_url of  (event info for event anEvent) as text to end of current
-		    copy event_location of  (event info for event anEvent) as text to end of current
-		    copy event_description of (event info for event anEvent) as text to end of current
-			copy event_external_ID of (event info for event anEvent) as text to end of current
-	   	end try
-		copy current to end of output 
-    end repeat 
-    return output
+		repeat with anEvent in theEvents
+			set startTime to event_start_date of (event info for event anEvent)
+			set current to {}
+			if (startTime ≥ d1) and (startTime ≤ d2) then
+				try
+					
+					copy event_summary of (event info for event anEvent) as text to end of current
+					copy event_start_date of (event info for event anEvent) as text to end of current
+					copy event_end_date of (event info for event anEvent) as text to end of current
+					copy event_url of (event info for event anEvent) as text to end of current
+					copy event_location of (event info for event anEvent) as text to end of current
+					copy event_description of (event info for event anEvent) as text to end of current
+					copy event_external_ID of (event info for event anEvent) as text to end of current
+					copy calendar_name of (event info for event anEvent) as text to end of current
+					
+					copy current to end of output
+				end try
+			end if
+		end repeat
+		return output
 `;
-  const rawEvents = await exec(script);
-  return rawEvents
-    .filter(e => e.length)
-    .map(evt => {
-      const [
-        summary,
-        start_date,
-        end_date,
-        url,
-        location,
-        description,
-        id,
-      ] = evt;
+  const rawEvents = await exec(script),
+    tidied = rawEvents
+      .filter(e => e.length)
+      .map(evt => {
+        const tidy = evt.map(e => {
+          if (e == 'missing value') return null;
+          return e;
+        });
 
-      return {
-        summary,
-        start_date,
-        end_date,
-        url,
-        location,
-        description,
-        id,
-      };
-    });
+        const [
+          summary,
+          startDate,
+          endDate,
+          url,
+          location,
+          description,
+          id,
+          calendarName,
+        ] = tidy;
+
+        return {
+          summary,
+          startDate: tidyDate(startDate),
+          endDate: tidyDate(endDate),
+          url,
+          location,
+          description,
+          id,
+          calendarName,
+        };
+      });
+
+  return tidied.filter(
+    ({calendarName}) => !calsToExclude.includes(calendarName),
+  );
 }
 
-async function main() {
-  const cals = await getCalendars(),
-    events = await getEvents();
-  console.log(cals, events);
+export async function syncCalendarsToUpcoming() {
+  const events = await getEvents();
+  setUpcoming(events);
 }
-
-main().then(() => console.log('done'));

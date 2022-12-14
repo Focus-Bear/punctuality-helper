@@ -7,8 +7,7 @@
   "scripts": {
     "start": "node index.mjs",
     "test": "NODE_ENV=test node index.mjs",
-    "dev": "node src/cal-v3.mjs",
-	"node": "node src/calendar-v2.mjs"
+	"dev": "node src/calendar-v2.mjs"
   },
   "keywords": [],
   "author": "",

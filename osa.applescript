@@ -4,26 +4,31 @@ use scripting additions
 use script "CalendarLib EC" version "1.1.1"
 
 set theStore to fetch store
-set theCals to fetch calendars {} event store theStore -- change to suit
-set theTitles to {}
-repeat with aCal in theCals
-	set end of theTitles to aCal's title() as text
-end repeat
-log theTitles
 
+set theCals to fetch calendars {} event store theStore
 set d1 to (current date)
-set d2 to d1 + 1 * days
--- only way I can reference single calendar
+set d2 to d1 + 1 * hours
 set theEvents to fetch events starting date d1 ending date d2 searching cals theCals event store theStore
 
--- searching against all calendar list
--- set theEvents to fetch events starting date d1 ending date d2 searching cals theCal event store theStore
+set output to {}
+
 repeat with anEvent in theEvents
-	try
-		log (event_summary of (event info for event anEvent))
-		log (event info for event anEvent)
-		log (event identifier for event anEvent)
-		log (event attendees for event anEvent)
-		log (event recurrence for event anEvent)
-	end try
+	set startTime to event_start_date of (event info for event anEvent)
+	set current to {}
+	if (startTime ³ d1) and (startTime ² d2) then
+		try
+			
+			copy event_summary of (event info for event anEvent) as text to end of current
+			copy event_start_date of (event info for event anEvent) as text to end of current
+			copy event_end_date of (event info for event anEvent) as text to end of current
+			copy event_url of (event info for event anEvent) as text to end of current
+			copy event_location of (event info for event anEvent) as text to end of current
+			copy event_description of (event info for event anEvent) as text to end of current
+			copy event_external_ID of (event info for event anEvent) as text to end of current
+			copy calendar_name of (event info for event anEvent) as text to end of current
+			
+			copy current to end of output
+		end try
+	end if
 end repeat
+return output

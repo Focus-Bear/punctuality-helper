@@ -1,6 +1,6 @@
 import {run} from '@jxa/run';
 import {addTestEvents} from './src/testing.mjs';
-import {syncCalendarsToUpcoming} from './src/calendar.mjs';
+import {syncCalendarsToUpcoming} from './src/calendar-v2.mjs';
 import {checkUpcomingForMeetings} from './src/upcoming.mjs';
 import {openMeetingURL} from './src/event.js';
 
@@ -44,6 +44,7 @@ export let upcoming = [],
   busy = false;
 
 export function setUpcoming(evts) {
+		console.log("setting upcoming to", evts)
   upcoming = evts;
 }
 
