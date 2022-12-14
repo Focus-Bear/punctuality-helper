@@ -9,46 +9,8 @@ const header = `
 	   	use script "CalendarLib EC" version "1.1.1"
 
 		set theStore to fetch store
-	 `;
-
-async function exec(script) {
-  return new Promise((resolve, reject) => {
-    return applescript.execString(header + script, (err, rtn) => {
-      if (err) {
-        // Something went wrong!
-        console.log('Error:', err);
-        reject(err);
-      }
-      resolve(rtn);
-    });
-  });
-}
-
-async function getCalendars() {
-  const script = `
-	    set theCals to fetch calendars {} event store theStore -- change to suit
-		set theTitles to {}
-		repeat with aCal in theCals
-	      set calTitle to aCal's title() as text
-		  log calTitle
-		  set theTitles to theTitles & calTitle   
-		end repeat
-
-		return theTitles`;
-
-  return await exec(script);
-}
-function tidyDate(date) {
-  return new Date(
-    date
-      .split(',')
-      .slice(1)
-      .join(',')
-      .replace(' at', ''),
-  );
-}
-async function getEvents() {
-  const script = `
+	 `,
+  events = `
         set theCals to fetch calendars {} event store theStore
 		set d1 to (current date)
 		set d2 to d1 + 1 * hours
@@ -76,8 +38,47 @@ async function getEvents() {
 			end if
 		end repeat
 		return output
-`;
-  const rawEvents = await exec(script),
+`,
+  allCalendars = `
+	    set theCals to fetch calendars {} event store theStore -- change to suit
+		set theTitles to {}
+		repeat with aCal in theCals
+	      set calTitle to aCal's title() as text
+		  log calTitle
+		  set theTitles to theTitles & calTitle   
+		end repeat
+
+		return theTitles`;
+
+async function exec(script) {
+  return new Promise((resolve, reject) => {
+    return applescript.execString(header + script, (err, rtn) => {
+      if (err) {
+        // Something went wrong!
+        console.log('Error:', err);
+        reject(err);
+      }
+      resolve(rtn);
+    });
+  });
+}
+
+async function getCalendars() {
+  return await exec(allCalendars);
+}
+
+function tidyDate(date) {
+  return new Date(
+    date
+      .split(',')
+      .slice(1)
+      .join(',')
+      .replace(' at', ''),
+  );
+}
+
+async function getEvents() {
+  const rawEvents = await exec(events),
     tidied = rawEvents
       .filter(e => e.length)
       .map(evt => {
