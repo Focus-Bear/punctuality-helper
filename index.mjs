@@ -53,11 +53,11 @@ export function addEvent(evt) {
   upcoming = [...upcoming, evt];
 }
 
-async function execute(callback) {
-  busy = true;
-  callback();
-  busy = false;
+export function removeEvent(evt) {
+  upcoming = upcoming.filter(({id}) => evt.id !== id);
+  console.log(`Removed ${evt.summary} from upcoming`)  	
 }
+
 
 async function main() {
   console.log('Punctuality Helper Online..');
@@ -65,15 +65,12 @@ async function main() {
   if (testing) await addTestEvents();
   else syncCalendarsToUpcoming();
 
-  setInterval(() => {
-    execute(syncCalendarsToUpcoming);
-  }, slowNapDurationMinutes * 60000);
+  setInterval(() => syncCalendarsToUpcoming(), slowNapDurationMinutes * 60000);
 
-  setInterval(() => {
-    if (busy) return;
-    execute(checkUpcomingForMeetings);
-    //
-  }, quickNapDurationMinutes * 60000);
+  setInterval(
+    () => checkUpcomingForMeetings(),
+    quickNapDurationMinutes * 60000,
+  );
 }
 
 main();
