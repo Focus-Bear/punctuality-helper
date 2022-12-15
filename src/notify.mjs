@@ -105,6 +105,7 @@ export default async function notifyUser(evt) {
       [present] = buttons;
 
     if (answer == present) {
+      console.log('Event data', evt)
       if (evt?.url) openMeetingURL(evt.url);
       // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
       askMeetingQuestions();
