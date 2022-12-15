@@ -8,7 +8,7 @@ export async function checkUpcomingForMeetings() {
 
   const count = upcoming.length;
   console.log(`Waiting on ${count} upcoming event${count > 1 ? 's' : ''}`);
-
+		
   const now = new Date();
   for (let i = 0; i < upcoming.length; i++) {
     const evt = upcoming[i],

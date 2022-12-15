@@ -32,7 +32,7 @@ export async function syncCalendarsToUpcoming() {
             { startDate: { _greaterThan: now } },
             { startDate: { _lessThan: until } },
           ],
-        });
+        }, {timeout: 300});
         if (!evts?.length) return [];
 
         for (let j = 0; j < evts.length; j++) {
