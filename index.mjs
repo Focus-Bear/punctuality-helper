@@ -5,8 +5,8 @@ import {checkUpcomingForMeetings} from './src/upcoming.mjs';
 import {openMeetingURL} from './src/event.js';
 
 export const lookaheadMinutes = 2, // how long before a meeting should I notify?
-  slowNapDurationMinutes = 1, // how often should I look for meetings in iCal?
-  quickNapDurationMinutes = 0.5, // how often should I check the in-memory list of upcoming
+  slowNapDurationMinutes = 5, // how often should I look for meetings in iCal?
+  quickNapDurationMinutes = 0.25, // how often should I check the in-memory list of upcoming
   pauseBetweenBarksSeconds = 5, // how many seconds does each line of dialog have to itself
   calsToExclude = [], // array of strings, names of calendars
   testing = process.env.NODE_ENV == 'test';

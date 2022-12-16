@@ -56,7 +56,7 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
     try {
       const response = run(
         (evt, line, givingUpAfter, buttons) => {
-          const title = evt.summary + ' ' + evt.startDate,
+          const title = `${evt.summary} (${evt.calendarName}) ${evt.startDate}`,
             app = Application.currentApplication(),
             [present, truant] = buttons;
 
@@ -106,7 +106,11 @@ export default async function notifyUser(evt) {
 
     if (answer == present) {
       console.log('Event data', evt)
-      if (evt?.url) openMeetingURL(evt.url);
+      if (evt?.url) {
+        openMeetingURL(evt.url);
+      } else if (evt?.location && evt.location.startsWith('http')) {
+        openMeetingURL(evt.location);
+      }
       // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
       askMeetingQuestions();
     }
