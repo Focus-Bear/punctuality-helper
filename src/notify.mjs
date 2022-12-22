@@ -8,6 +8,7 @@ import {
 } from '../index.mjs';
 
 import {showMeeting, openURL} from './event.js';
+import {showIntention, noIntention} from './intention.mjs';
 
 let barking = false;
 
@@ -53,7 +54,7 @@ export function askMeetingQuestions() {
 }
 
 async function showAlert(evt, line, givingUpAfter, buttons) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const response = run(
         (evt, line, givingUpAfter, buttons) => {
@@ -79,6 +80,7 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
         givingUpAfter,
         buttons,
       );
+      if (response == buttons[1]) await noIntention();
       resolve(response);
     } catch (e) {
       console.log('Error in showAlert()', e);
@@ -86,8 +88,6 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
     }
   });
 }
-
-function confirmIntention(intention) {}
 
 export default async function notifyUser(evt) {
   console.log('Notifying user about', evt.summary, evt.startDate);
@@ -111,6 +111,7 @@ export default async function notifyUser(evt) {
       if (evt?.url) openURL(evt.url);
       // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
       const intention = askMeetingQuestions();
+      if (intention) await showIntention(intention);
     }
     if (answer) {
       clearInterval(barking);
