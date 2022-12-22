@@ -7,7 +7,7 @@ import {
   pauseBetweenBarksSeconds,
 } from '../index.mjs';
 
-import {showMeeting, openMeetingURL} from './event.js';
+import {showMeeting, openURL} from './event.js';
 
 let barking = false;
 
@@ -45,6 +45,7 @@ export function askMeetingQuestions() {
         },
         {timeout: 3},
       );
+      return resp;
     } catch (e) {
       console.log('Error in askMeetingQuestions', e);
     }
@@ -86,6 +87,8 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
   });
 }
 
+function confirmIntention(intention) {}
+
 export default async function notifyUser(evt) {
   console.log('Notifying user about', evt.summary, evt.startDate);
 
@@ -105,9 +108,9 @@ export default async function notifyUser(evt) {
       [present] = buttons;
 
     if (answer == present) {
-      if (evt?.url) openMeetingURL(evt.url);
+      if (evt?.url) openURL(evt.url);
       // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
-      askMeetingQuestions();
+      const intention = askMeetingQuestions();
     }
     if (answer) {
       clearInterval(barking);

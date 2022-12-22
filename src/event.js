@@ -19,7 +19,7 @@ export async function showMeeting(calendar, uid) {
   );
 }
 
-export async function openMeetingURL(url) {
+export async function openURL(url) {
   console.log('Opening url ', url);
   return run(url => {
     try {
@@ -33,7 +33,7 @@ export async function openMeetingURL(url) {
       window.tabs.push(newTab);
       window.currentTab = newTab;
     } catch (e) {
-      console.log('Error in openMeetingURL() :', e);
+      console.log('Error in openURL() :', e);
     }
   }, url);
 }
