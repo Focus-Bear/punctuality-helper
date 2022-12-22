@@ -12,10 +12,11 @@ import {showIntention, noIntention} from './intention.mjs';
 
 let barking = false;
 
-function verbalAlert() {
+function verbalAlert(evt) {
   barking = setInterval(() => {
     const randomIndex = Math.floor(Math.random() * verbalAlerts.length),
-      dialog = verbalAlerts[randomIndex];
+      preamble = 'Meeting ' + evt.summary + '.',
+      dialog = preamble + verbalAlerts[randomIndex];
 
     return run(toSay => {
       try {
