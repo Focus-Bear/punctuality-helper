@@ -1,20 +1,20 @@
-import {run} from '@jxa/run';
-import {
-  dialogStages,
-  verbalAlerts,
-  meetingQuestions,
-  buttons,
-  pauseBetweenBarksSeconds,
-} from '../index.mjs';
+const {run} = require('@jxa/run');
+const {
+  DIALOG_STAGES,
+  VERBAL_ALERTS,
+  MEETING_QUESTIONS,
+  MEETING_ACTION_BUTTONS,
+  PAUSE_BETWEEN_BARKS_SECONDS,
+} = require('../index.js');
 
-import {showMeeting, openMeetingURL} from './event.js';
+const { openMeetingURL } = require('./event.js');
 
 let barking = false;
 
 function verbalAlert() {
   barking = setInterval(() => {
-    const randomIndex = Math.floor(Math.random() * verbalAlerts.length),
-      dialog = verbalAlerts[randomIndex];
+    const randomIndex = Math.floor(Math.random() * VERBAL_ALERTS.length),
+      dialog = VERBAL_ALERTS[randomIndex];
 
     return run(toSay => {
       try {
@@ -22,14 +22,14 @@ function verbalAlert() {
         app.includeStandardAdditions = true;
         app.say(toSay);
       } catch (e) {
-        console.log('Error in verbalAlerts()', e);
+        console.log('Error in VERBAL_ALERTS()', e);
       }
     }, dialog);
-  }, pauseBetweenBarksSeconds * 1000);
+  }, PAUSE_BETWEEN_BARKS_SECONDS * 1000);
 }
 
-export function askMeetingQuestions() {
-  run(meetingQuestions => {
+function askMEETING_QUESTIONS() {
+  run(MEETING_QUESTIONS => {
     try {
       const app = Application.currentApplication(),
         {calendars} = Application('Calendar');
@@ -37,7 +37,7 @@ export function askMeetingQuestions() {
       app.includeStandardAdditions = true;
 
       const resp = app.displayDialog(
-        meetingQuestions.join('\n'),
+        MEETING_QUESTIONS.join('\n'),
         {
           defaultAnswer: '\n \n \n',
           buttons: ['Close'],
@@ -46,19 +46,19 @@ export function askMeetingQuestions() {
         {timeout: 3},
       );
     } catch (e) {
-      console.log('Error in askMeetingQuestions', e);
+      console.log('Error in askMEETING_QUESTIONS', e);
     }
-  }, meetingQuestions);
+  }, MEETING_QUESTIONS);
 }
 
 async function showAlert(evt, line, givingUpAfter, buttons) {
   return new Promise((resolve, reject) => {
     try {
       const response = run(
-        (evt, line, givingUpAfter, buttons) => {
+        (evt, line, givingUpAfter, MEETING_ACTION_BUTTONS) => {
           const title = evt.summary + ' ' + evt.startDate,
             app = Application.currentApplication(),
-            [present, truant] = buttons;
+            [present, truant] = MEETING_ACTION_BUTTONS;
 
           app.includeStandardAdditions = true;
 
@@ -76,7 +76,7 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
         evt,
         line,
         givingUpAfter,
-        buttons,
+        MEETING_ACTION_BUTTONS,
       );
       resolve(response);
     } catch (e) {
@@ -86,17 +86,17 @@ async function showAlert(evt, line, givingUpAfter, buttons) {
   });
 }
 
-export default async function notifyUser(evt) {
+async function notifyUser(evt) {
   console.log('Notifying user about', evt.summary, evt.startDate);
 
   const rightNow = new Date(),
     toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000),
-    perStage = Math.floor(toGo / (dialogStages.length - 1)),
-    finalLine = dialogStages[dialogStages.length - 1];
+    perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1)),
+    finalLine = DIALOG_STAGES[DIALOG_STAGES.length - 1];
 
-  for (let i = 0; i < dialogStages.length; i++) {
-    const line = dialogStages[i],
-      lastRow = i + 1 == dialogStages.length,
+  for (let i = 0; i < DIALOG_STAGES.length; i++) {
+    const line = DIALOG_STAGES[i],
+      lastRow = i + 1 == DIALOG_STAGES.length,
       givingUpAfter = !lastRow ? perStage : 0;
 
     if (lastRow && !barking) verbalAlert();
@@ -107,11 +107,15 @@ export default async function notifyUser(evt) {
     if (answer == present) {
       if (evt?.url) openMeetingURL(evt.url);
       // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
-      askMeetingQuestions();
+      askMEETING_QUESTIONS();
     }
     if (answer) {
       clearInterval(barking);
       break;
     }
   }
+}
+
+module.exports = {
+  notifyUser
 }

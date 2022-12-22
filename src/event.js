@@ -1,5 +1,5 @@
-import {run} from '@jxa/run';
-export async function showMeeting(calendar, uid) {
+const {run} = require('@jxa/run');
+async function showMeeting(calendar, uid) {
   return run(
     (name, uid) => {
       try {
@@ -19,7 +19,7 @@ export async function showMeeting(calendar, uid) {
   );
 }
 
-export async function openMeetingURL(url) {
+async function openMeetingURL(url) {
   console.log('Opening url ', url);
   return run(url => {
     try {
@@ -36,4 +36,9 @@ export async function openMeetingURL(url) {
       console.log('Error in openMeetingURL() :', e);
     }
   }, url);
+}
+
+module.exports = {
+  openMeetingURL,
+  showMeeting
 }
