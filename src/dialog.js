@@ -11,7 +11,7 @@ export async function showDialog(text, buttons, title) {
             text,
             {
               buttons,
-              defaultButton: buttons[1],
+              defaultButton: buttons[1] || buttons[0],
               givingUpAfter: 30,
               withTitle: title,
             },

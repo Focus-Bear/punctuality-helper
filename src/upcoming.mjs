@@ -4,6 +4,8 @@ import {
   removeEvent,
   lookaheadMinutes,
 } from '../index.mjs';
+import {showDialog} from './dialog.js';
+
 import notifyUser from './notify.mjs';
 
 export async function checkUpcomingForMeetings() {
@@ -18,8 +20,13 @@ export async function checkUpcomingForMeetings() {
   for (let i = 0; i < upcoming.length; i++) {
     const evt = upcoming[i],
       delta = (new Date(evt.startDate) - now) / 1000,
-      imminent = delta < lookaheadMinutes * 60;
+      imminent = delta < lookaheadMinutes * 60,
+      impending = delta < 15.55 * 60 && delta > 14.45 * 60;
 
+    const impendingText = `${eventName} is starting in 15 minutes. I'll remind you again 2 minutes before.`,
+      buttons = ['Got it'];
+
+    if (impending) await showDialog(text, buttons, title);
     if (imminent > 0) {
       removeEvent(evt);
       notifyUser(evt);
