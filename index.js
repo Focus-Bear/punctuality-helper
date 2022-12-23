@@ -1,6 +1,6 @@
 const LOOK_AHEAD_MINUTES = 2, // how long before a meeting should I notify?
   SLOW_NAP_DURATION_MINUTES = 5, // how often should I look for meetings in iCal?
-  quickNapDurationMinutes = 0.5, // how often should I check the in-memory list of upcomingEvents
+  QUICK_NAP_DURATION = 0.5, // how often should I check the in-memory list of upcomingEvents
   PAUSE_BETWEEN_BARKS_SECONDS = 5, // how many seconds does each line of dialog have to itself
   // Checking calendars is slow so exclude any that don't contain events you care about.
   // It can be a partial match and it's case insensitive. e.g. Holiday will match "UK holidays"
@@ -61,14 +61,17 @@ async function main() {
     const { addTestEvents } = require('./src/testing.js');
 
     await addTestEvents();
+  } else {
+    syncCalendarsToUpcoming();
   }
-  else syncCalendarsToUpcoming();
 
   setInterval(() => syncCalendarsToUpcoming(), SLOW_NAP_DURATION_MINUTES * 60000);
 
   setInterval(
-    () => checkUpcomingForMeetings(),
-    quickNapDurationMinutes * 60000,
+    () => {
+      checkUpcomingForMeetings(upcomingEvents)
+    },
+    QUICK_NAP_DURATION * 60000,
   );
 }
 

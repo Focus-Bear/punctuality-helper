@@ -1,18 +1,19 @@
 const {
-  upcomingEvents,
   setUpcoming,
   removeEvent,
   LOOK_AHEAD_MINUTES,
 } = require('../index.js');
 const { notifyUser } = require('./notify.js');
 
-async function checkUpcomingForMeetings() {
-  if (!upcomingEvents?.length) return;
+async function checkUpcomingForMeetings(upcomingEvents) {
+  if (!upcomingEvents?.length) {
+    return;
+  }
 
   let expired = [];
 
   const count = upcomingEvents.length;
-  console.log(`Waiting on ${count} upcomingEvents event${count > 1 ? 's' : ''}`);
+  console.log(`Waiting on ${count} upcoming event${count > 1 ? 's' : ''}`);
 
   const now = new Date();
   for (let i = 0; i < upcomingEvents.length; i++) {
@@ -24,9 +25,12 @@ async function checkUpcomingForMeetings() {
       removeEvent(evt);
       notifyUser(evt);
     }
-    if (imminent <= 0) expired.push(evt.uid);
+    if (imminent <= 0) {
+      expired.push(evt.uid);
+    }
   }
   if (expired.length) {
+    console.log('Events expired - removing them from list');
     setUpcoming(upcomingEvents.filter(evt => !expired.includes(evt.uid)));
   }
 }

@@ -117,6 +117,7 @@ async function getEvents() {
 
 async function syncCalendarsToUpcoming() {
   const events = await getEvents();
+  console.log(`Found ${events.length} upcoming events, ${JSON.stringify(events)}`);
   setUpcoming(events);
 }
 

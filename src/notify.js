@@ -51,7 +51,7 @@ function askMEETING_QUESTIONS() {
   }, MEETING_QUESTIONS);
 }
 
-async function showAlert(evt, line, givingUpAfter, buttons) {
+async function showAlert(evt, line, givingUpAfter, MEETING_ACTION_BUTTONS) {
   return new Promise((resolve, reject) => {
     try {
       const response = run(
@@ -101,8 +101,8 @@ async function notifyUser(evt) {
 
     if (lastRow && !barking) verbalAlert();
 
-    const answer = await showAlert(evt, line, givingUpAfter, buttons),
-      [present] = buttons;
+    const answer = await showAlert(evt, line, givingUpAfter, MEETING_ACTION_BUTTONS),
+      [present] = MEETING_ACTION_BUTTONS;
 
     if (answer == present) {
       if (evt?.url) openMeetingURL(evt.url);
