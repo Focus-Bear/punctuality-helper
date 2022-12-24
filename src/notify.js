@@ -5,9 +5,9 @@ const {
   MEETING_QUESTIONS,
   MEETING_ACTION_BUTTONS,
   PAUSE_BETWEEN_BARKS_SECONDS,
-} = require('../index.js');
+} = require('../config.js');
 
-const { openMeetingURL } = require('./event.js');
+const {openMeetingURL} = require('./event.js');
 
 let barking = false;
 
@@ -28,7 +28,7 @@ function verbalAlert(evt) {
   }, PAUSE_BETWEEN_BARKS_SECONDS * 1000);
 }
 
-function askMEETING_QUESTIONS() {
+function askMeetingQuestions() {
   run(MEETING_QUESTIONS => {
     try {
       const app = Application.currentApplication(),
@@ -47,13 +47,13 @@ function askMEETING_QUESTIONS() {
       );
       return resp;
     } catch (e) {
-      console.log('Error in askMEETING_QUESTIONS', e);
+      console.log('Error in askMeetingQuestions()', e);
     }
   }, MEETING_QUESTIONS);
 }
 
 async function showAlert(evt, line, givingUpAfter, MEETING_ACTION_BUTTONS) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const response = run(
         (evt, line, givingUpAfter, MEETING_ACTION_BUTTONS) => {
@@ -103,13 +103,18 @@ async function notifyUser(evt) {
 
     if (lastRow && !barking) verbalAlert();
 
-    const answer = await showAlert(evt, line, givingUpAfter, MEETING_ACTION_BUTTONS),
+    const answer = await showAlert(
+        evt,
+        line,
+        givingUpAfter,
+        MEETING_ACTION_BUTTONS,
+      ),
       [present] = MEETING_ACTION_BUTTONS;
 
     if (answer == present) {
       if (evt?.url) openURL(evt.url);
       // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
-      askMEETING_QUESTIONS();
+      askMeetingQuestions();
     }
     if (answer) {
       clearInterval(barking);
@@ -119,5 +124,5 @@ async function notifyUser(evt) {
 }
 
 module.exports = {
-  notifyUser
-}
+  notifyUser,
+};

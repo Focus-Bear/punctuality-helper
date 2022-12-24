@@ -1,11 +1,22 @@
-const {
-  setUpcoming,
-  removeEvent,
-  LOOK_AHEAD_MINUTES,
-} = require('../index.js');
-const { notifyUser } = require('./notify.js');
+const {LOOK_AHEAD_MINUTES} = require('../config.js'),
+  {notifyUser} = require('./notify.js');
 
-async function checkUpcomingForMeetings(upcomingEvents) {
+let upcomingEvents = [];
+
+function setUpcoming(evts) {
+  upcomingEvents = evts;
+}
+
+function addEvent(evt) {
+  upcomingEvents = [...upcomingEvents, evt];
+}
+
+function removeEvent(evt) {
+  upcomingEvents = upcomingEvents.filter(({id}) => evt.id !== id);
+  console.log(`Removed ${evt.summary} from upcomingEvents`);
+}
+
+async function checkUpcomingForMeetings() {
   if (!upcomingEvents?.length) {
     return;
   }
@@ -34,7 +45,14 @@ async function checkUpcomingForMeetings(upcomingEvents) {
     setUpcoming(upcomingEvents.filter(evt => !expired.includes(evt.uid)));
   }
 }
+const exportFuncs = {
+  removeEvent,
+  addEvent,
+  setUpcoming,
+  upcomingEvents,
+  checkUpcomingForMeetings,
+};
 
-module.exports = {
-  checkUpcomingForMeetings
+for (const key in exportFuncs) {
+  exports[key] = exportFuncs[key];
 }

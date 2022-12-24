@@ -1,4 +1,5 @@
-const {setUpcoming, upcomingEvents, LOOK_AHEAD_MINUTES} = require('../index.js');
+const {setUpcoming, upcomingEvents} = require('../index.js'),
+  {LOOK_AHEAD_MINUTES} = require('../config.js');
 
 function addDummyEvent(summary, uid, offset, location, url) {
   const startDate = new Date();
@@ -11,12 +12,9 @@ function addDummyEvent(summary, uid, offset, location, url) {
 
 async function addTestEvents() {
   console.log('In testing mode...');
-		
+
   const waitFor = LOOK_AHEAD_MINUTES - 0.5;
   addDummyEvent('Event', '1', waitFor, 'meeting room', 'https://google.com');
 }
 
-module.exports = {
-  addTestEvents,
-  addDummyEvent
-}
+module.exports = addTestEvents;

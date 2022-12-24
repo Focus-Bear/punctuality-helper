@@ -1,6 +1,7 @@
 const applescript = require('applescript');
 
-const {setUpcoming, CALENDARS_TO_EXCLUDE} = require('../index.js');
+const {setUpcoming} = require('./upcoming.js'),
+  {CALENDARS_TO_EXCLUDE} = require('../config.js');
 
 const header = `
 		use AppleScript version "2.4" -- Yosemite (10.10) or later
@@ -68,47 +69,42 @@ async function getCalendars() {
 }
 
 function tidyDate(date) {
-  return new Date(
-    date
-      .split(',')
-      .slice(1)
-      .join(',')
-      .replace(' at', ''),
-  );
+  return new Date(date.split(',').slice(1).join(',').replace(' at', ''));
+}
+
+function tidyEvent(evt) {
+  const tidy = evt.map(e => {
+    if (e == 'missing value') return null;
+    return e;
+  });
+
+  const [
+    summary,
+    startDate,
+    endDate,
+    url,
+    location,
+    description,
+    id,
+    calendarName,
+  ] = tidy;
+
+  return {
+    summary,
+    startDate: tidyDate(startDate),
+    endDate: tidyDate(endDate),
+    url,
+    location,
+    description,
+    id,
+    calendarName,
+  };
 }
 
 async function getEvents() {
-  const rawEvents = await exec(events),
-    tidied = rawEvents
-      .filter(e => e.length)
-      .map(evt => {
-        const tidy = evt.map(e => {
-          if (e == 'missing value') return null;
-          return e;
-        });
-
-        const [
-          summary,
-          startDate,
-          endDate,
-          url,
-          location,
-          description,
-          id,
-          calendarName,
-        ] = tidy;
-
-        return {
-          summary,
-          startDate: tidyDate(startDate),
-          endDate: tidyDate(endDate),
-          url,
-          location,
-          description,
-          id,
-          calendarName,
-        };
-      });
+  console.log('getEvents()');
+  const rawEvents = (await exec(events)).filter(e => e.length),
+    tidied = rawEvents.map(tidyEvent);
 
   return tidied.filter(
     ({calendarName}) => !CALENDARS_TO_EXCLUDE.includes(calendarName),
@@ -117,10 +113,12 @@ async function getEvents() {
 
 async function syncCalendarsToUpcoming() {
   const events = await getEvents();
-  console.log(`Found ${events.length} upcoming events, ${JSON.stringify(events)}`);
+  console.log(
+    `Found ${events.length} upcoming events, ${JSON.stringify(events)}`,
+  );
   setUpcoming(events);
 }
 
 module.exports = {
-  syncCalendarsToUpcoming
-}
+  syncCalendarsToUpcoming,
+};
