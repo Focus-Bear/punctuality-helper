@@ -1,7 +1,8 @@
-const {setUpcoming, upcomingEvents} = require('../index.js'),
-  {LOOK_AHEAD_MINUTES} = require('../config.js');
+const {LOOK_AHEAD_MINUTES} = require('../../config.js');
 
 function addDummyEvent(summary, uid, offset, location, url) {
+  const {setUpcoming, upcomingEvents} = require('../upcoming.js');
+
   const startDate = new Date();
   startDate.setMinutes(startDate.getMinutes() + offset);
 

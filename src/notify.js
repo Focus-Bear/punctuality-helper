@@ -1,95 +1,41 @@
-const {run} = require('@jxa/run');
 const {
   DIALOG_STAGES,
   VERBAL_ALERTS,
   MEETING_QUESTIONS,
   MEETING_ACTION_BUTTONS,
   PAUSE_BETWEEN_BARKS_SECONDS,
-} = require('../config.js');
+} = require("../config.js");
 
-const {openMeetingURL} = require('./event.js');
+const { showDialog, askQuestion } = require("./jxa/dialog.js"),
+  say = require("./jxa/say.js");
 
 let barking = false;
 
 function verbalAlert(evt) {
+  const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000;
+
   barking = setInterval(() => {
     const randomIndex = Math.floor(Math.random() * VERBAL_ALERTS.length),
-      dialog = VERBAL_ALERTS[randomIndex];
+      toSay = VERBAL_ALERTS[randomIndex];
 
-    return run(toSay => {
-      try {
-        const app = Application.currentApplication();
-        app.includeStandardAdditions = true;
-        app.say(toSay);
-      } catch (e) {
-        console.log('Error in VERBAL_ALERTS()', e);
-      }
-    }, dialog);
-  }, PAUSE_BETWEEN_BARKS_SECONDS * 1000);
+    say(toSay);
+  }, pauseFor);
 }
 
-function askMeetingQuestions() {
-  run(MEETING_QUESTIONS => {
-    try {
-      const app = Application.currentApplication(),
-        {calendars} = Application('Calendar');
-
-      app.includeStandardAdditions = true;
-
-      const resp = app.displayDialog(
-        MEETING_QUESTIONS.join('\n'),
-        {
-          defaultAnswer: '\n \n \n',
-          buttons: ['Close'],
-          defaultButton: 'Close',
-        },
-        {timeout: 3},
-      );
-      return resp;
-    } catch (e) {
-      console.log('Error in askMeetingQuestions()', e);
-    }
-  }, MEETING_QUESTIONS);
+async function askMeetingQuestions() {
+  const question = MEETING_QUESTIONS.join("\n"),
+    intention = await askQuestion(question);
 }
 
-async function showAlert(evt, line, givingUpAfter, MEETING_ACTION_BUTTONS) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = run(
-        (evt, line, givingUpAfter, MEETING_ACTION_BUTTONS) => {
-          const title = evt.summary + ' ' + evt.startDate,
-            app = Application.currentApplication(),
-            [present, truant] = MEETING_ACTION_BUTTONS;
+async function showMeetingAlert(evt, line, givingUpAfter) {
+  const title = evt.summary + " " + evt.startDate,
+    text = [line, "\n", evt.location, evt.url].join("\n");
 
-          app.includeStandardAdditions = true;
-
-          return app.displayDialog(
-            [line, '\n', evt.location, evt.url].join('\n'),
-            {
-              buttons: [present, truant],
-              defaultButton: truant,
-              givingUpAfter,
-              withTitle: title,
-            },
-            {timeout: 300},
-          )?.buttonReturned;
-        },
-        evt,
-        line,
-        givingUpAfter,
-        MEETING_ACTION_BUTTONS,
-      );
-      if (response == buttons[1]) await noIntention();
-      resolve(response);
-    } catch (e) {
-      console.log('Error in showAlert()', e);
-      reject(e);
-    }
-  });
+  return await showDialog(title, text, MEETING_ACTION_BUTTONS, givingUpAfter);
 }
 
 async function notifyUser(evt) {
-  console.log('Notifying user about', evt.summary, evt.startDate);
+  console.log("Notifying user about", evt.summary, evt.startDate);
 
   const rightNow = new Date(),
     toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000),
@@ -103,17 +49,11 @@ async function notifyUser(evt) {
 
     if (lastRow && !barking) verbalAlert();
 
-    const answer = await showAlert(
-        evt,
-        line,
-        givingUpAfter,
-        MEETING_ACTION_BUTTONS,
-      ),
+    const answer = await showMeetingAlert(evt, line, givingUpAfter),
       [present] = MEETING_ACTION_BUTTONS;
 
     if (answer == present) {
       if (evt?.url) openURL(evt.url);
-      // showMeeting(evt.calendar, evt.uid);  // shows iCal with meeting selected
       askMeetingQuestions();
     }
     if (answer) {
@@ -123,6 +63,4 @@ async function notifyUser(evt) {
   }
 }
 
-module.exports = {
-  notifyUser,
-};
+module.exports = notifyUser;

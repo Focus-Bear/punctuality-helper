@@ -1,25 +1,33 @@
 const {
-  IS_TESTING,
   SLOW_NAP_DURATION_MINUTES,
   QUICK_NAP_DURATION,
-} = require('./config.js');
+  IS_TESTING,
+} = require("./config.js");
+
+const { setUpcoming, checkUpcomingForMeetings } = require("./src/upcoming.js"),
+  getEvents = require("./src/applescript/calendar-v2.js");
+
+async function syncCalendarsToUpcoming() {
+  const events = await getEvents();
+  console.log(
+    `Found ${events.length} upcoming events, ${JSON.stringify(events)}`
+  );
+  setUpcoming(events);
+}
 
 async function main() {
-  const {syncCalendarsToUpcoming} = require('./src/calendar-v2.js'),
-    {checkUpcomingForMeetings} = require('./src/upcoming.js');
+  console.log("Late No More Online..");
 
-  console.log('Punctuality Helper Online..');
-
-  if (IS_TESTING) await require('./src/testing.js')();
+  if (IS_TESTING) await require("./src/testing/index.js")();
   else syncCalendarsToUpcoming();
 
   const quickInterval = QUICK_NAP_DURATION * 60000,
     slowInterval = SLOW_NAP_DURATION_MINUTES * 60000;
 
-  setInterval(() => syncCalendarsToUpcoming(), slowInterval);
-  setInterval(() => checkUpcomingForMeetings(), quickInterval);
+  setInterval(async () => await syncCalendarsToUpcoming(), slowInterval);
+  setInterval(async () => await checkUpcomingForMeetings(), quickInterval);
 }
 
 main()
   .then(() => {})
-  .catch(e => console.log(e));
+  .catch((e) => console.log(e));

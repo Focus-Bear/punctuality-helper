@@ -1,5 +1,5 @@
-import {showDialog} from './dialog.js';
-import {openURL} from './event.js';
+import showDialog from './dialog.js';
+import {openURL} from './jxa/event.js';
 
 const visitFocusBear = 'Visit Website',
   closeDialog = 'Close',

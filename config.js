@@ -3,38 +3,35 @@ const LOOK_AHEAD_MINUTES = 2, // how long before a meeting should I notify?
   QUICK_NAP_DURATION = 0.5, // how often should I check the in-memory list of upcomingEvents
   PAUSE_BETWEEN_BARKS_SECONDS = 5, // how many seconds does each line of dialog have to itself
   // It can be a partial match and it's case insensitive. e.g. Holiday will match "UK holidays"
-  CALENDARS_TO_EXCLUDE = ['Birthday', 'Holiday', 'Contacts'],
-  IS_TESTING = process.env.NODE_ENV == 'test';
+  CALENDARS_TO_EXCLUDE = ["Birthday", "Holiday", "Contacts"],
+  IS_TESTING = process.env.NODE_ENV == "test";
 
 const DIALOG_STAGES = [
-    '😊 heads up, meeting starting soon!',
-    '😅 fyi your meeting will begin in a moment',
-    '😥 all aboard! meeting about to depart',
-    '😰 final call!',
-    '😱 you are late.',
+    "😊 heads up, meeting starting soon!",
+    "😅 fyi your meeting will begin in a moment",
+    "😥 all aboard! meeting about to depart",
+    "😰 final call!",
+    "😱 you are late.",
   ],
   VERBAL_ALERTS = [
-    'yellow alert, meeting imminent',
-    'red alert',
+    "yellow alert, meeting imminent",
+    "red alert",
     "heyyoo... it's time",
-    'beep beep!',
-    'meeting time!',
-    'hey!! check your calendar!',
+    "beep beep!",
+    "meeting time!",
+    "hey!! check your calendar!",
   ],
   MEETING_QUESTIONS = [
-    'what do you want to contribute to the meeting?',
-    'what will you learn?',
-    'why is it important to pay attention in this meeting?',
+    "what do you want to contribute to the meeting?",
+    "what will you learn?",
+    "why is it important to pay attention in this meeting?",
   ];
 
-const present = 'Attend meeting',
+const present = "Attend meeting",
   truant = "I don't need to attend",
   MEETING_ACTION_BUTTONS = [present, truant];
 
-//
-// end of configuration variables
-//
-const exportVars = {
+module.exports = {
   MEETING_ACTION_BUTTONS,
   DIALOG_STAGES,
   LOOK_AHEAD_MINUTES,
@@ -43,8 +40,6 @@ const exportVars = {
   MEETING_QUESTIONS,
   VERBAL_ALERTS,
   IS_TESTING,
+  QUICK_NAP_DURATION,
+  SLOW_NAP_DURATION_MINUTES,
 };
-
-for (const key in exportVars) {
-  exports[key] = exportVars[key];
-}

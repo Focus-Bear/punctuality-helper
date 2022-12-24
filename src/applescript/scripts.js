@@ -1,8 +1,3 @@
-const applescript = require('applescript');
-
-const {setUpcoming} = require('./upcoming.js'),
-  {CALENDARS_TO_EXCLUDE} = require('../config.js');
-
 const header = `
 		use AppleScript version "2.4" -- Yosemite (10.10) or later
 	   	use framework "Foundation"
@@ -51,74 +46,4 @@ const header = `
 
 		return theTitles`;
 
-async function exec(script) {
-  return new Promise((resolve, reject) => {
-    return applescript.execString(header + script, (err, rtn) => {
-      if (err) {
-        // Something went wrong!
-        console.log('Error:', err);
-        reject(err);
-      }
-      resolve(rtn);
-    });
-  });
-}
-
-async function getCalendars() {
-  return await exec(allCalendars);
-}
-
-function tidyDate(date) {
-  return new Date(date.split(',').slice(1).join(',').replace(' at', ''));
-}
-
-function tidyEvent(evt) {
-  const tidy = evt.map(e => {
-    if (e == 'missing value') return null;
-    return e;
-  });
-
-  const [
-    summary,
-    startDate,
-    endDate,
-    url,
-    location,
-    description,
-    id,
-    calendarName,
-  ] = tidy;
-
-  return {
-    summary,
-    startDate: tidyDate(startDate),
-    endDate: tidyDate(endDate),
-    url,
-    location,
-    description,
-    id,
-    calendarName,
-  };
-}
-
-async function getEvents() {
-  console.log('getEvents()');
-  const rawEvents = (await exec(events)).filter(e => e.length),
-    tidied = rawEvents.map(tidyEvent);
-
-  return tidied.filter(
-    ({calendarName}) => !CALENDARS_TO_EXCLUDE.includes(calendarName),
-  );
-}
-
-async function syncCalendarsToUpcoming() {
-  const events = await getEvents();
-  console.log(
-    `Found ${events.length} upcoming events, ${JSON.stringify(events)}`,
-  );
-  setUpcoming(events);
-}
-
-module.exports = {
-  syncCalendarsToUpcoming,
-};
+module.exports = {header, events, allCalendars};

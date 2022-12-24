@@ -1,5 +1,5 @@
 const {LOOK_AHEAD_MINUTES} = require('../config.js'),
-  {notifyUser} = require('./notify.js');
+  notifyUser = require('./notify.js');
 
 let upcomingEvents = [];
 
@@ -23,10 +23,11 @@ async function checkUpcomingForMeetings() {
 
   let expired = [];
 
-  const count = upcomingEvents.length;
+  const now = new Date(),
+    count = upcomingEvents.length;
+
   console.log(`Waiting on ${count} upcoming event${count > 1 ? 's' : ''}`);
 
-  const now = new Date();
   for (let i = 0; i < upcomingEvents.length; i++) {
     const evt = upcomingEvents[i],
       delta = (new Date(evt.startDate) - now) / 1000,
@@ -42,17 +43,13 @@ async function checkUpcomingForMeetings() {
   }
   if (expired.length) {
     console.log('Events expired - removing them from list');
-    setUpcoming(upcomingEvents.filter(evt => !expired.includes(evt.uid)));
+    upcomingEvents = upcomingEvents.filter(evt => !expired.includes(evt.uid));
   }
 }
-const exportFuncs = {
+module.exports = {
   removeEvent,
   addEvent,
   setUpcoming,
   upcomingEvents,
   checkUpcomingForMeetings,
 };
-
-for (const key in exportFuncs) {
-  exports[key] = exportFuncs[key];
-}
