@@ -45,8 +45,6 @@ module.exports = async function getEvents() {
     withOutBlanks = rawEvents.filter((e) => e.length),
     tidied = withOutBlanks.map(tidyEvent);
 
-  console.log({ tidied });
-
   return tidied.filter(({ calendarName }) => {
     return !CALENDARS_TO_EXCLUDE.includes(calendarName);
   });
