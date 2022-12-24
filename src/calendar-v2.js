@@ -1,6 +1,6 @@
-import applescript from 'applescript';
+const applescript = require('applescript');
 
-import {setUpcoming, addEvent, calsToExclude} from '../index.mjs';
+const {setUpcoming, CALENDARS_TO_EXCLUDE} = require('../index.js');
 
 const header = `
 		use AppleScript version "2.4" -- Yosemite (10.10) or later
@@ -111,11 +111,16 @@ async function getEvents() {
       });
 
   return tidied.filter(
-    ({calendarName}) => !calsToExclude.includes(calendarName),
+    ({calendarName}) => !CALENDARS_TO_EXCLUDE.includes(calendarName),
   );
 }
 
-export async function syncCalendarsToUpcoming() {
+async function syncCalendarsToUpcoming() {
   const events = await getEvents();
+  console.log(`Found ${events.length} upcoming events, ${JSON.stringify(events)}`);
   setUpcoming(events);
+}
+
+module.exports = {
+  syncCalendarsToUpcoming
 }
