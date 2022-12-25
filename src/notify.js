@@ -1,4 +1,5 @@
 const { showDialog, askQuestion } = require("./jxa/dialog.js"),
+  openMeetingURL = require("./jxa/event.js"),
   say = require("./jxa/say.js");
 
 const {
@@ -53,7 +54,7 @@ async function notifyUser(evt) {
       [present] = MEETING_ACTION_BUTTONS;
 
     if (answer == present) {
-      if (evt?.url) openURL(evt.url);
+      if (evt?.url) openMeetingURL(evt.url);
       askMeetingQuestions();
     }
     if (answer) {

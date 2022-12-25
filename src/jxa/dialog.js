@@ -27,7 +27,7 @@ async function showDialog(title, text, buttons, givingUpAfter = 30) {
       );
       resolve(response.buttonReturned);
     } catch (e) {
-      console.log("Error in showDialog()", e);
+      console.log("Error in jxa/showDialog()", e);
       reject(e);
     }
   });
@@ -52,7 +52,7 @@ async function askQuestion(questionText) {
       }, questionText);
       resolve(response);
     } catch (e) {
-      console.log("Error in askQuestion()", e);
+      console.log("jxa/askQuestion()", e);
     }
   });
 }

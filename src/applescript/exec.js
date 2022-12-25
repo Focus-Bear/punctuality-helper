@@ -1,11 +1,10 @@
 const applescript = require("applescript");
 
-const { header } = require("./scripts.js");
+const { SCRIPT_HEADER } = require("./scripts.js");
 
-module.exports = function exec(script) {
+module.exports = function exec(SCRIPT) {
   return new Promise((resolve, reject) => {
-    const scriptBody = header + script;
-    return applescript.execString(scriptBody, (err, rtn) => {
+    return applescript.execString(SCRIPT_HEADER + SCRIPT, (err, rtn) => {
       if (err) {
         console.log("Error:", err);
         reject(err);

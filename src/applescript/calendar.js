@@ -12,9 +12,9 @@ function tidyDate(date) {
 }
 
 function tidyEvent(evt) {
-  const tidy = evt.map((e) => {
-    if (e == "missing value") return null;
-    return e;
+  const tidy = evt.map((field) => {
+    if (field == "missing value") return null;
+    return field;
   });
 
   const [summary, start, end, url, loc, desc, id, calName] = tidy;
