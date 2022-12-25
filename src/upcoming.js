@@ -16,13 +16,14 @@ function removeEvent(evt) {
   console.log(`Removed ${evt.summary} from upcomingEvents`);
 }
 
-async function syncCalendarsToUpcoming() {
-  const events = await getEvents();
-  console.log(`Found ${events.length} upcoming events`);
-  upcomingEvents = events;
+function syncCalendarsToUpcoming() {
+  getEvents().then((events) => {
+    console.log(`Found ${events.length} upcoming events`);
+    upcomingEvents = events;
+  });
 }
 
-async function checkUpcomingForMeetings() {
+function checkUpcomingForMeetings() {
   console.log("Checking upcomingEvents..");
   if (!upcomingEvents?.length) {
     return;
@@ -41,7 +42,7 @@ async function checkUpcomingForMeetings() {
 
     if (soon) warnUser(evt);
 
-    if (delta > 0 && delta < 15) {
+    if (imminent && delta < 15) {
       removeEvent(evt);
       notifyUser(evt);
     }
@@ -50,7 +51,7 @@ async function checkUpcomingForMeetings() {
     }
   }
   if (expired.length) {
-    console.log("Events expired - removing them from list");
+    console.log("Removing expired event(s) from upcomingEvents list");
     upcomingEvents = upcomingEvents.filter((evt) => !expired.includes(evt.uid));
   }
 }
