@@ -1,8 +1,6 @@
 const { run } = require("@jxa/run");
 
 async function showDialog(title, text, buttons, givingUpAfter = 30) {
-  console.log({ showDialog: { title, text, buttons } });
-
   return new Promise((resolve, reject) => {
     try {
       const response = run(
@@ -29,19 +27,17 @@ async function showDialog(title, text, buttons, givingUpAfter = 30) {
       );
       resolve(response.buttonReturned);
     } catch (e) {
-      console.log("Error in showDialog()", e);
+      console.log("Error in jxa/showDialog()", e);
       reject(e);
     }
   });
 }
 
 async function askQuestion(questionText) {
-  try {
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
+    try {
       const response = run((question) => {
-        const app = Application.currentApplication(),
-          { calendars } = Application("Calendar");
-
+        const app = Application.currentApplication();
         app.includeStandardAdditions = true;
 
         return app.displayDialog(
@@ -55,10 +51,10 @@ async function askQuestion(questionText) {
         );
       }, questionText);
       resolve(response);
-    });
-  } catch (e) {
-    console.log("Error in askQuestion()", e);
-  }
+    } catch (e) {
+      console.log("jxa/askQuestion()", e);
+    }
+  });
 }
 
 module.exports = { showDialog, askQuestion };

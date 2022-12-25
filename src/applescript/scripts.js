@@ -1,4 +1,4 @@
-const header = `
+const SCRIPT_HEADER = `
 		use AppleScript version "2.4" -- Yosemite (10.10) or later
 	   	use framework "Foundation"
 	   	use scripting additions
@@ -6,7 +6,7 @@ const header = `
 
 		set theStore to fetch store
 	 `,
-  events = `
+  GET_ALL_EVENTS = `
         set theCals to fetch calendars {} event store theStore
 		set d1 to (current date)
 		set d2 to d1 + 1 * hours
@@ -35,7 +35,7 @@ const header = `
 		end repeat
 		return output
 `,
-  allCalendars = `
+  GET_ALL_CALENDARS = `
 	    set theCals to fetch calendars {} event store theStore -- change to suit
 		set theTitles to {}
 		repeat with aCal in theCals
@@ -46,4 +46,4 @@ const header = `
 
 		return theTitles`;
 
-module.exports = { header, events, allCalendars };
+module.exports = { SCRIPT_HEADER, GET_ALL_EVENTS, GET_ALL_CALENDARS };

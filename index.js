@@ -1,11 +1,11 @@
+const { setUpcoming, checkUpcomingForMeetings } = require("./src/upcoming.js"),
+  getEvents = require("./src/applescript/calendar.js");
+
 const {
   SLOW_NAP_DURATION_MINUTES,
-  QUICK_NAP_DURATION,
+  QUICK_NAP_DURATION_SECONDS,
   IS_TESTING,
 } = require("./config.js");
-
-const { setUpcoming, checkUpcomingForMeetings } = require("./src/upcoming.js"),
-  getEvents = require("./src/applescript/calendar-v2.js");
 
 async function syncCalendarsToUpcoming() {
   const events = await getEvents();
@@ -21,8 +21,8 @@ async function main() {
   if (IS_TESTING) await require("./src/testing/index.js")();
   else syncCalendarsToUpcoming();
 
-  const quickInterval = QUICK_NAP_DURATION * 60000,
-    slowInterval = SLOW_NAP_DURATION_MINUTES * 60000;
+  const quickInterval = QUICK_NAP_DURATION_SECONDS * 60_000,
+    slowInterval = SLOW_NAP_DURATION_MINUTES * 60_000;
 
   setInterval(async () => await syncCalendarsToUpcoming(), slowInterval);
   setInterval(async () => await checkUpcomingForMeetings(), quickInterval);
