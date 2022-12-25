@@ -1,3 +1,5 @@
+require('./src/keyboard.js');
+
 const addTestEvents = require('./src/testing/index.js'),
   {
     syncCalendarsToUpcoming,
