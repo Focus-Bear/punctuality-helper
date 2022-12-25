@@ -6,7 +6,10 @@ const visitFocusBear = "Visit Website",
   buttons = [visitFocusBear, closeDialog];
 
 async function showIntention(intention) {
-  const text = `Got it. Here's the intention for future reference: ${intention}.
+  const text = `Got it. Here's your intention for future reference: 
+
+${intention}.
+
 If you need help staying focused during meetings, check out focusbear.io 
 Made by the same people who made this app.`,
     title = "Your intention:",

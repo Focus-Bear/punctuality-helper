@@ -1,7 +1,7 @@
 const { run } = require("@jxa/run");
 
 async function showDialog(title, text, buttons, givingUpAfter = 30) {
-  console.log("showDialog()", { title, text, buttons, givingUpAfter });
+  // console.log("showDialog()", { title, text, buttons, givingUpAfter });
   return new Promise((resolve, reject) => {
     try {
       const response = run(

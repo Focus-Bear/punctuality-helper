@@ -1,7 +1,5 @@
-const notifyUser = require("./notify.js"),
+const { notifyUser, warnUser, calculateProximity } = require("./notify.js"),
   getEvents = require("./applescript/calendar.js");
-
-const { LOOK_AHEAD_MINUTES } = require("../config.js");
 
 let upcomingEvents = [];
 
@@ -39,14 +37,15 @@ async function checkUpcomingForMeetings() {
 
   for (let i = 0; i < upcomingEvents.length; i++) {
     const evt = upcomingEvents[i],
-      delta = (new Date(evt.startDate) - now) / 1000,
-      imminent = delta < LOOK_AHEAD_MINUTES * 60;
+      { delta, imminent, soon } = calculateProximity(evt, now);
 
-    if (imminent > 0) {
+    if (soon) warnUser(evt);
+
+    if (delta > 0 && delta < 15) {
       removeEvent(evt);
-      await notifyUser(evt);
+      notifyUser(evt);
     }
-    if (imminent <= 0) {
+    if (delta <= 0) {
       expired.push(evt.uid);
     }
   }

@@ -8,6 +8,7 @@ const {
   MEETING_QUESTIONS,
   MEETING_ACTION_BUTTONS,
   PAUSE_BETWEEN_BARKS_SECONDS,
+  LOOK_AHEAD_MINUTES,
 } = require("../config.js");
 
 const { showIntention, noIntention } = require("./intention.js");
@@ -40,7 +41,22 @@ async function showMeetingAlert(evt, line, givingUpAfter) {
   return await showDialog(title, text, buttons, givingUpAfter);
 }
 
-module.exports = async function notifyUser(evt) {
+function calculateProximity(evt, now) {
+  const delta = (new Date(evt.startDate) - now) / 1000,
+    imminent = delta < LOOK_AHEAD_MINUTES * 60,
+    soon = delta < 15.55 * 60 && delta > 14.45 * 60;
+  return { delta, soon, imminent };
+}
+
+async function warnUser(evt) {
+  const title = `${evt.summary} is starting in 15 minutes.`,
+    text = `I'll remind you again ${LOOK_AHEAD_MINUTES} minutes before.`,
+    buttons = ["Got it"];
+
+  await showDialog(title, text, buttons, 15);
+}
+
+async function notifyUser(evt) {
   console.log("Notifying user about", evt.summary, evt.startDate);
 
   const rightNow = new Date(),
@@ -71,4 +87,6 @@ module.exports = async function notifyUser(evt) {
     await noIntention();
     break;
   }
-};
+}
+
+module.exports = { calculateProximity, warnUser, notifyUser };
