@@ -1,6 +1,7 @@
 const { run } = require("@jxa/run");
 
 async function showDialog(title, text, buttons, givingUpAfter = 30) {
+  console.log("showDialog()", { title, text, buttons, givingUpAfter });
   return new Promise((resolve, reject) => {
     try {
       const response = run(
@@ -25,7 +26,8 @@ async function showDialog(title, text, buttons, givingUpAfter = 30) {
         buttons,
         givingUpAfter
       );
-      resolve(response.buttonReturned);
+
+      resolve(response);
     } catch (e) {
       console.log("Error in jxa/showDialog()", e);
       reject(e);
@@ -34,9 +36,9 @@ async function showDialog(title, text, buttons, givingUpAfter = 30) {
 }
 
 async function askQuestion(questionText) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      const response = run((question) => {
+      const response = await run((question) => {
         const app = Application.currentApplication();
         app.includeStandardAdditions = true;
 
@@ -50,7 +52,7 @@ async function askQuestion(questionText) {
           { timeout: 3 }
         );
       }, questionText);
-      resolve(response);
+      resolve(response.textReturned);
     } catch (e) {
       console.log("jxa/askQuestion()", e);
     }

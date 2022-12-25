@@ -10,22 +10,26 @@ const {
   PAUSE_BETWEEN_BARKS_SECONDS,
 } = require("../config.js");
 
+const { showIntention, noIntention } = require("./intention.js");
+
 let barking = false;
 
-function verbalAlert(evt) {
+function startBarking(evt) {
+  console.log("Starting barks...");
   const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000;
 
   barking = setInterval(() => {
     const randomIndex = Math.floor(Math.random() * VERBAL_ALERTS.length),
-      toSay = VERBAL_ALERTS[randomIndex];
+      dialog = VERBAL_ALERTS[randomIndex],
+      preamble = "Meeting, '" + evt.summary + "'.",
+      toSay = preamble + dialog;
 
     say(toSay);
   }, pauseFor);
 }
-
-async function askMeetingQuestions() {
-  const question = MEETING_QUESTIONS.join("\n"),
-    intention = await askQuestion(question);
+function stopBarking() {
+  console.log("Silencing barks");
+  clearInterval(barking);
 }
 
 async function showMeetingAlert(evt, line, givingUpAfter) {
@@ -36,7 +40,7 @@ async function showMeetingAlert(evt, line, givingUpAfter) {
   return await showDialog(title, text, buttons, givingUpAfter);
 }
 
-async function notifyUser(evt) {
+module.exports = async function notifyUser(evt) {
   console.log("Notifying user about", evt.summary, evt.startDate);
 
   const rightNow = new Date(),
@@ -48,20 +52,23 @@ async function notifyUser(evt) {
       lastRow = i + 1 == DIALOG_STAGES.length,
       givingUpAfter = !lastRow ? perStage : 0;
 
-    if (lastRow && !barking) verbalAlert();
+    if (lastRow && !barking) startBarking(evt);
 
     const answer = await showMeetingAlert(evt, line, givingUpAfter),
       [present] = MEETING_ACTION_BUTTONS;
 
-    if (answer == present) {
-      if (evt?.url) openMeetingURL(evt.url);
-      askMeetingQuestions();
-    }
-    if (answer) {
-      clearInterval(barking);
-      break;
-    }
-  }
-}
+    if (answer) stopBarking();
+    if (!answer) continue;
 
-module.exports = notifyUser;
+    if (answer == present) {
+      if (evt?.url) await openMeetingURL(evt.url);
+
+      const question = MEETING_QUESTIONS.join("\n"),
+        intention = await askQuestion(question);
+
+      await showIntention(intention);
+    }
+    await noIntention();
+    break;
+  }
+};

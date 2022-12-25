@@ -1,6 +1,6 @@
 const { run } = require("@jxa/run");
 
-module.exports = async function openMeetingURL(url) {
+module.exports = async function openURL(url) {
   return await run((url) => {
     console.log("Opening url ", url);
     try {

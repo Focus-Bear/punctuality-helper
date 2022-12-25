@@ -1,4 +1,5 @@
-const notifyUser = require("./notify.js");
+const notifyUser = require("./notify.js"),
+  getEvents = require("./applescript/calendar.js");
 
 const { LOOK_AHEAD_MINUTES } = require("../config.js");
 
@@ -17,7 +18,14 @@ function removeEvent(evt) {
   console.log(`Removed ${evt.summary} from upcomingEvents`);
 }
 
+async function syncCalendarsToUpcoming() {
+  const events = await getEvents();
+  console.log(`Found ${events.length} upcoming events`);
+  upcomingEvents = events;
+}
+
 async function checkUpcomingForMeetings() {
+  console.log("Checking upcomingEvents..");
   if (!upcomingEvents?.length) {
     return;
   }
@@ -36,7 +44,7 @@ async function checkUpcomingForMeetings() {
 
     if (imminent > 0) {
       removeEvent(evt);
-      notifyUser(evt);
+      await notifyUser(evt);
     }
     if (imminent <= 0) {
       expired.push(evt.uid);
@@ -53,4 +61,5 @@ module.exports = {
   setUpcoming,
   upcomingEvents,
   checkUpcomingForMeetings,
+  syncCalendarsToUpcoming,
 };
