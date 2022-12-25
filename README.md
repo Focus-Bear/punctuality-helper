@@ -8,7 +8,7 @@ Clone this repo and run a
 
 `npm install`
 
-Edit index.mjs if defaults below aren't appropriate for your use case.
+Edit config.js if defaults below aren't appropriate for your use case.
 
 Then
 
