@@ -1,6 +1,8 @@
-const { showDialog, askQuestion } = require("./jxa/dialog.js"),
-  openMeetingURL = require("./jxa/event.js"),
-  say = require("./jxa/say.js");
+const {GlobalKeyboardListener} = require('node-global-key-listener');
+
+const {showDialog, askQuestion} = require('./jxa/dialog.js'),
+  openMeetingURL = require('./jxa/event.js'),
+  say = require('./jxa/say.js');
 
 const {
   DIALOG_STAGES,
@@ -9,14 +11,21 @@ const {
   MEETING_ACTION_BUTTONS,
   PAUSE_BETWEEN_BARKS_SECONDS,
   LOOK_AHEAD_MINUTES,
-} = require("../config.js");
+} = require('../config.js');
 
-const { showIntention, noIntention } = require("./intention.js");
+const {showIntention, noIntention} = require('./intention.js');
 
 let barking = false;
 
+const keyListener = new GlobalKeyboardListener();
+
+keyListener.addListener(function (e, down) {
+  if (down['LEFT SHIFT'] && down['LEFT META'] && down['LEFT CTRL'] && down['A'])
+    clearInterval(barking);
+});
+
 function startBarking(evt) {
-  console.log("Starting barks...");
+  console.log('Starting barks...');
   const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000;
 
   barking = setInterval(() => {
@@ -29,13 +38,13 @@ function startBarking(evt) {
   }, pauseFor);
 }
 function stopBarking() {
-  console.log("Silencing barks");
+  console.log('Silencing barks');
   clearInterval(barking);
 }
 
 async function showMeetingAlert(evt, line, givingUpAfter) {
-  const title = evt.summary + " " + evt.startDate,
-    text = [line, "\n", evt.location, evt.url].join("\n"),
+  const title = evt.summary + ' ' + evt.startDate,
+    text = [line, '\n', evt.location, evt.url].join('\n'),
     buttons = MEETING_ACTION_BUTTONS;
 
   return await showDialog(title, text, buttons, givingUpAfter);
@@ -45,19 +54,19 @@ function calculateProximity(evt, now) {
   const delta = (new Date(evt.startDate) - now) / 1000,
     imminent = delta < LOOK_AHEAD_MINUTES * 60,
     soon = delta < 15.55 * 60 && delta > 14.45 * 60;
-  return { delta, soon, imminent };
+  return {delta, soon, imminent};
 }
 
 async function warnUser(evt) {
   const title = `${evt.summary} is starting in 15 minutes.`,
     text = `I'll remind you again ${LOOK_AHEAD_MINUTES} minutes before.`,
-    buttons = ["Got it"];
+    buttons = ['Got it'];
 
   await showDialog(title, text, buttons, 15);
 }
 
 async function notifyUser(evt) {
-  console.log("Notifying user about", evt.summary, evt.startDate);
+  console.log('Notifying user about', evt.summary, evt.startDate);
 
   const rightNow = new Date(),
     toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000),
@@ -79,7 +88,7 @@ async function notifyUser(evt) {
     if (answer == present) {
       if (evt?.url) await openMeetingURL(evt.url);
 
-      const question = MEETING_QUESTIONS.join("\n"),
+      const question = MEETING_QUESTIONS.join('\n'),
         intention = await askQuestion(question);
 
       await showIntention(intention);
@@ -89,4 +98,4 @@ async function notifyUser(evt) {
   }
 }
 
-module.exports = { calculateProximity, warnUser, notifyUser };
+module.exports = {calculateProximity, warnUser, notifyUser};
