@@ -24,7 +24,6 @@ function syncCalendarsToUpcoming() {
 }
 
 function checkUpcomingForMeetings() {
-  console.log("Checking upcomingEvents..");
   if (!upcomingEvents?.length) {
     return;
   }
@@ -42,7 +41,7 @@ function checkUpcomingForMeetings() {
 
     if (soon) warnUser(evt);
 
-    if (imminent && delta < 15) {
+    if (delta && imminent && delta < 15) {
       removeEvent(evt);
       notifyUser(evt);
     }
@@ -56,8 +55,8 @@ function checkUpcomingForMeetings() {
   }
 }
 module.exports = {
-  removeEvent,
   addEvent,
+  removeEvent,
   setUpcoming,
   upcomingEvents,
   checkUpcomingForMeetings,
