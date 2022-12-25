@@ -1,5 +1,3 @@
-const {GlobalKeyboardListener} = require('node-global-key-listener');
-
 const {showDialog, askQuestion} = require('./jxa/dialog.js'),
   openMeetingURL = require('./jxa/event.js'),
   say = require('./jxa/say.js');
@@ -17,13 +15,6 @@ const {showIntention, noIntention} = require('./intention.js');
 
 let barking = false;
 
-const keyListener = new GlobalKeyboardListener();
-
-keyListener.addListener(function (e, down) {
-  if (down['LEFT SHIFT'] && down['LEFT META'] && down['LEFT CTRL'] && down['A'])
-    clearInterval(barking);
-});
-
 function startBarking(evt) {
   console.log('Starting barks...');
   const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000;
@@ -37,6 +28,7 @@ function startBarking(evt) {
     say(toSay);
   }, pauseFor);
 }
+
 function stopBarking() {
   console.log('Silencing barks');
   clearInterval(barking);
@@ -98,4 +90,4 @@ async function notifyUser(evt) {
   }
 }
 
-module.exports = {calculateProximity, warnUser, notifyUser};
+module.exports = {calculateProximity, warnUser, notifyUser, stopBarking};

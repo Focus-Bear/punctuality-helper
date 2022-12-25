@@ -31,8 +31,8 @@ function checkUpcomingForMeetings() {
 
   let expired = [];
 
-  const now = new Date(),
-    count = upcomingEvents.length;
+  const { length: count } = upcomingEvents,
+    now = new Date();
 
   console.log(`Waiting on ${count} upcoming event${count > 1 ? "s" : ""}`);
 
