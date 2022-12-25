@@ -21,15 +21,16 @@ repeat with anEvent in theEvents
 		
 		try
 			set current to {}
+			
 			copy event_summary of (event info for event anEvent) as text to end of current
 			copy event_start_date of (event info for event anEvent) as text to end of current
-			--	copy event_end_date of (event info for event anEvent) as text to end of current
-			--	copy event_url of (event info for event anEvent) as text to end of current
-			--	copy event_location of (event info for event anEvent) as text to end of current
-			--	copy event_description of (event info for event anEvent) as text to end of current
-			--	copy event_external_ID of (event info for event anEvent) as text to end of current
-			--	copy event_creation_date of (event info for event anEvent) as text to end of current
-			--	copy calendar_name of (event info for event anEvent) as text to end of current
+			copy event_end_date of (event info for event anEvent) as text to end of current
+			copy event_url of (event info for event anEvent) as text to end of current
+			copy event_location of (event info for event anEvent) as text to end of current
+			copy event_description of (event info for event anEvent) as text to end of current
+			copy event_external_ID of (event info for event anEvent) as text to end of current
+			copy event_creation_date of (event info for event anEvent) as text to end of current
+			copy calendar_name of (event info for event anEvent) as text to end of current
 			
 			copy current to end of output
 		end try

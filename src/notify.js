@@ -1,3 +1,6 @@
+const { showDialog, askQuestion } = require("./jxa/dialog.js"),
+  say = require("./jxa/say.js");
+
 const {
   DIALOG_STAGES,
   VERBAL_ALERTS,
@@ -5,9 +8,6 @@ const {
   MEETING_ACTION_BUTTONS,
   PAUSE_BETWEEN_BARKS_SECONDS,
 } = require("../config.js");
-
-const { showDialog, askQuestion } = require("./jxa/dialog.js"),
-  say = require("./jxa/say.js");
 
 let barking = false;
 
@@ -29,9 +29,10 @@ async function askMeetingQuestions() {
 
 async function showMeetingAlert(evt, line, givingUpAfter) {
   const title = evt.summary + " " + evt.startDate,
-    text = [line, "\n", evt.location, evt.url].join("\n");
+    text = [line, "\n", evt.location, evt.url].join("\n"),
+    buttons = MEETING_ACTION_BUTTONS;
 
-  return await showDialog(title, text, MEETING_ACTION_BUTTONS, givingUpAfter);
+  return await showDialog(title, text, buttons, givingUpAfter);
 }
 
 async function notifyUser(evt) {
@@ -39,8 +40,7 @@ async function notifyUser(evt) {
 
   const rightNow = new Date(),
     toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000),
-    perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1)),
-    finalLine = DIALOG_STAGES[DIALOG_STAGES.length - 1];
+    perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1));
 
   for (let i = 0; i < DIALOG_STAGES.length; i++) {
     const line = DIALOG_STAGES[i],
