@@ -26,7 +26,7 @@ function syncCalendarsToUpcoming() {
 
 function shouldIgnoreEvent(eventToCheck) {
   return EVENTS_TO_EXCLUDE.some((eventPhraseToExclude) => {
-    return eventToCheck.summary?.toLowerCase?.includes();
+    return eventToCheck?.summary?.toLowerCase()?.includes(eventPhraseToExclude);
   })
 }
 
@@ -40,7 +40,7 @@ function checkUpcomingForMeetings() {
   const { length: count } = upcomingEvents,
     now = new Date();
 
-  console.log(`Waiting on ${count} upcoming event${count > 1 ? "s" : ""}`);
+  console.log(`Waiting on ${count} upcoming event${count > 1 ? "s" : ""}`, JSON.stringify(upcomingEvents));
 
   for (let i = 0; i < upcomingEvents.length; i++) {
     const evt = upcomingEvents[i],
@@ -58,7 +58,9 @@ function checkUpcomingForMeetings() {
       removeEvent(evt);
       notifyUser(evt);
     }
-    if (delta <= 0) {
+
+    // Super late now - stop hassling them
+    if (delta <= -10) {
       expired.push(evt.uid);
     }
   }
