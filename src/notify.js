@@ -1,6 +1,6 @@
-const {showDialog, askQuestion} = require('./jxa/dialog.js'),
-  openMeetingURL = require('./jxa/event.js'),
-  say = require('./jxa/say.js');
+const {showDialog, askQuestion} = require('./applescript/dialog.js'),
+  openMeetingURL = require('./applescript/event.js'),
+  say = require('./applescript/say.js');
 
 const {
   DIALOG_STAGES,
@@ -19,13 +19,14 @@ function startBarking(evt) {
   console.log('Starting barks...');
   const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000;
 
-  barking = setInterval(() => {
+  barking = setInterval(async () => {
+    console.log("in barking interval")
     const randomIndex = Math.floor(Math.random() * VERBAL_ALERTS.length),
       dialog = VERBAL_ALERTS[randomIndex],
       preamble = "Meeting, '" + evt.summary + "'.",
       toSay = preamble + dialog;
 
-    say(toSay);
+   await say(toSay);
   }, pauseFor);
 }
 
@@ -50,9 +51,10 @@ function calculateProximity(evt, now) {
 }
 
 async function warnUser(evt) {
+  console.log("warnUser()")
   const title = `${evt.summary} is starting in 15 minutes.`,
     text = `I'll remind you again ${LOOK_AHEAD_MINUTES} minutes before.`,
-    buttons = ['Got it'];
+    buttons = ['Got it', 'Close'];
 
   await showDialog(title, text, buttons, 15);
 }
@@ -69,6 +71,7 @@ async function notifyUser(evt) {
       lastRow = i + 1 == DIALOG_STAGES.length,
       givingUpAfter = !lastRow ? perStage : 0;
 
+    console.log({line, lastRow, givingUpAfter})
     if (lastRow && !barking) startBarking(evt);
 
     const answer = await showMeetingAlert(evt, line, givingUpAfter),

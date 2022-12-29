@@ -1,19 +1,20 @@
-const exec = require("./exec.js"),
-  { GET_ALL_EVENTS } = require("./scripts.js");
+const exec = require('./exec.js'),
+  {GET_ALL_EVENTS} = require('./scripts.js');
 
-const { CALENDARS_TO_EXCLUDE } = require("../../config.js");
+const {CALENDARS_TO_EXCLUDE} = require('../../config.js');
+const {SCRIPT_HEADER} = require('./scripts.js');
 
 async function getCalendars() {
   return await exec(allCalendars);
 }
 
 function tidyDate(date) {
-  return new Date(date.split(",").slice(1).join(",").replace(" at", ""));
+  return new Date(date.split(',').slice(1).join(',').replace(' at', ''));
 }
 
 function tidyEvent(evt) {
-  const tidy = evt.map((field) => {
-    if (field == "missing value") return null;
+  const tidy = evt.map(field => {
+    if (field == 'missing value') return null;
     return field;
   });
 
@@ -32,11 +33,15 @@ function tidyEvent(evt) {
 }
 
 module.exports = async function getEvents() {
-  const rawEvents = await exec(GET_ALL_EVENTS),
-    withOutBlanks = rawEvents.filter((e) => e.length),
-    tidied = withOutBlanks.map(tidyEvent);
+  try {
+    const rawEvents = await exec(SCRIPT_HEADER + GET_ALL_EVENTS),
+      withOutBlanks = rawEvents.filter(e => e.length),
+      tidied = withOutBlanks.map(tidyEvent);
 
-  return tidied.filter(({ calendarName: name }) => {
-    return !CALENDARS_TO_EXCLUDE.includes(name);
-  });
+    return tidied.filter(({calendarName: name}) => {
+      return !CALENDARS_TO_EXCLUDE.includes(name);
+    });
+  } catch (e) {
+    console.log('Error in applescript/calendar.js');
+  }
 };
