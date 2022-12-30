@@ -1,5 +1,5 @@
-const { showDialog } = require("./jxa/dialog.js"),
-  openURL = require("./jxa/event.js");
+const { showDialog } = require("./applescript/dialog.js"),
+  openURL = require("./applescript/event.js");
 
 const visitFocusBear = "Visit Website",
   closeDialog = "Close",

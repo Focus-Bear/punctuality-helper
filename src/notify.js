@@ -76,6 +76,7 @@ async function notifyUser(evt) {
 
     const answer = await showMeetingAlert(evt, line, givingUpAfter),
       [present] = MEETING_ACTION_BUTTONS;
+    console.log({answer})
 
     if (answer) stopBarking();
     if (!answer) continue;
