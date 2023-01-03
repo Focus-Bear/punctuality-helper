@@ -37,6 +37,10 @@ module.exports = async function getEvents() {
     tidied = withOutBlanks.map(tidyEvent);
 
   return tidied.filter(({ calendarName: name }) => {
-    return !CALENDARS_TO_EXCLUDE.includes(name);
+    if (CALENDARS_TO_EXCLUDE.includes(name)) {
+      console.log(`Ignoring ${name} because it is in one of the excluded calendars`)
+      return false;
+    }
+    return true;
   });
 };

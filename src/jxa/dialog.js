@@ -43,7 +43,7 @@ async function askQuestion(questionText) {
         app.includeStandardAdditions = true;
 
         return app.displayDialog(
-          question,
+          `Late No More: ${question}`,
           {
             defaultAnswer: "\n \n \n",
             buttons: ["Close"],
