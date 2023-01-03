@@ -51,8 +51,8 @@ function calculateProximity(evt, now) {
 }
 
 async function warnUser(evt) {
-  console.log("warnUser()")
-  const title = `${evt.summary} is starting in 15 minutes.`,
+  const title = `${evt.summary} (${evt.calendarName}) is starting in 15 minutes.`,
+
     text = `I'll remind you again ${LOOK_AHEAD_MINUTES} minutes before.`,
     buttons = ['Got it', 'Close'];
 
@@ -82,7 +82,11 @@ async function notifyUser(evt) {
     if (!answer) continue;
 
     if (answer == present) {
-      if (evt?.url) await openMeetingURL(evt.url);
+      if (evt?.url) {
+        await openMeetingURL(evt.url);
+      } else if (evt?.location && evt.location.startsWith('http')) {
+        await openMeetingURL(evt.location);
+      }
 
       const question = MEETING_QUESTIONS.join('\n'),
         intention = await askQuestion(question);
