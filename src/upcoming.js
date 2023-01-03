@@ -74,6 +74,7 @@ function checkUpcomingForMeetings() {
             expired.push(evt.uid)
         }
     }
+
     if (expired.length) {
         console.log('Removing expired event(s) from upcomingEvents list')
         upcomingEvents = upcomingEvents.filter(
