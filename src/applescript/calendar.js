@@ -38,10 +38,11 @@ module.exports = async function getEvents() {
       withOutBlanks = rawEvents.filter(e => e.length),
       tidied = withOutBlanks.map(tidyEvent);
 
-    return tidied.filter(({calendarName: name}) => {
-      return !CALENDARS_TO_EXCLUDE.includes(name);
-    });
-  } catch (e) {
-    console.log('Error in applescript/calendar.js');
-  }
+  return tidied.filter(({ calendarName: name }) => {
+    if (CALENDARS_TO_EXCLUDE.includes(name)) {
+      console.log(`Ignoring ${name} because it is in one of the excluded calendars`)
+      return false;
+    }
+    return true;
+  });
 };

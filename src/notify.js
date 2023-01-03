@@ -1,6 +1,6 @@
-const {showDialog, askQuestion} = require('./applescript/dialog.js'),
-  openMeetingURL = require('./applescript/event.js'),
-  say = require('./applescript/say.js');
+const { showDialog, askQuestion } = require("./applescript/dialog.js"),
+  openMeetingURL = require("./applescript/event.js"),
+  say = require("./applescript/say.js");
 
 const {
   DIALOG_STAGES,
@@ -9,35 +9,35 @@ const {
   MEETING_ACTION_BUTTONS,
   PAUSE_BETWEEN_BARKS_SECONDS,
   LOOK_AHEAD_MINUTES,
-} = require('../config.js');
+} = require("../config.js");
 
-const {showIntention, noIntention} = require('./intention.js');
+const { showIntention, noIntention } = require("./intention.js");
 
 let barking = false;
 
 function startBarking(evt) {
-  console.log('Starting barks...');
+  console.log("Starting barks...");
   const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000;
 
   barking = setInterval(async () => {
-    console.log("in barking interval")
+    console.log("in barking interval");
     const randomIndex = Math.floor(Math.random() * VERBAL_ALERTS.length),
       dialog = VERBAL_ALERTS[randomIndex],
       preamble = "Meeting, '" + evt.summary + "'.",
       toSay = preamble + dialog;
 
-   await say(toSay);
+    await say(toSay);
   }, pauseFor);
 }
 
 function stopBarking() {
-  console.log('Silencing barks');
+  console.log("Silencing barks");
   clearInterval(barking);
 }
 
 async function showMeetingAlert(evt, line, givingUpAfter) {
-  const title = evt.summary + ' ' + evt.startDate,
-    text = [line, '\n', evt.location, evt.url].join('\n'),
+  const title = `Late No More: ${evt.summary} ${evt.startDate}`,
+    text = [line, "\n", evt.location, evt.url].join("\n"),
     buttons = MEETING_ACTION_BUTTONS;
 
   return await showDialog(title, text, buttons, givingUpAfter);
@@ -47,20 +47,19 @@ function calculateProximity(evt, now) {
   const delta = (new Date(evt.startDate) - now) / 1000,
     imminent = delta < LOOK_AHEAD_MINUTES * 60,
     soon = delta < 15.55 * 60 && delta > 14.45 * 60;
-  return {delta, soon, imminent};
+  return { delta, soon, imminent };
 }
 
 async function warnUser(evt) {
-  console.log("warnUser()")
-  const title = `${evt.summary} is starting in 15 minutes.`,
+  const title = `Late No More: ${evt.summary} (${evt.calendarName}) is starting in 15 minutes.`,
     text = `I'll remind you again ${LOOK_AHEAD_MINUTES} minutes before.`,
-    buttons = ['Got it', 'Close'];
+    buttons = ["Got it", "Close"];
 
   await showDialog(title, text, buttons, 15);
 }
 
 async function notifyUser(evt) {
-  console.log('Notifying user about', evt.summary, evt.startDate);
+  console.log("Notifying user about", evt.summary, evt.startDate);
 
   const rightNow = new Date(),
     toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000),
@@ -71,20 +70,24 @@ async function notifyUser(evt) {
       lastRow = i + 1 == DIALOG_STAGES.length,
       givingUpAfter = !lastRow ? perStage : 0;
 
-    console.log({line, lastRow, givingUpAfter})
+    console.log({ line, lastRow, givingUpAfter });
     if (lastRow && !barking) startBarking(evt);
 
     const answer = await showMeetingAlert(evt, line, givingUpAfter),
       [present] = MEETING_ACTION_BUTTONS;
-    console.log({answer})
+    console.log({ answer });
 
     if (answer) stopBarking();
     if (!answer) continue;
 
     if (answer == present) {
-      if (evt?.url) await openMeetingURL(evt.url);
+      if (evt?.url) {
+        await openMeetingURL(evt.url);
+      } else if (evt?.location && evt.location.startsWith("http")) {
+        await openMeetingURL(evt.location);
+      }
 
-      const question = MEETING_QUESTIONS.join('\n'),
+      const question = MEETING_QUESTIONS.join("\n"),
         intention = await askQuestion(question);
 
       await showIntention(intention);
@@ -94,4 +97,4 @@ async function notifyUser(evt) {
   }
 }
 
-module.exports = {calculateProximity, warnUser, notifyUser, stopBarking};
+module.exports = { calculateProximity, warnUser, notifyUser, stopBarking };

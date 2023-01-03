@@ -4,7 +4,8 @@ const LOOK_AHEAD_MINUTES = 2, // how long before a meeting should I notify?
   PAUSE_BETWEEN_BARKS_SECONDS = 5, // how many seconds does each line of dialog have to itself
   // It can be a partial match and it's case insensitive. e.g. Holiday will match "UK holidays"
   CALENDARS_TO_EXCLUDE = ["Birthday", "Holiday", "Contacts"],
-  IS_TESTING = true// process.env.NODE_ENV == "test";
+  EVENTS_TO_EXCLUDE = ["Birthday", "Holiday", "Contacts"],
+  IS_TESTING = process.env.NODE_ENV == "test";
 
 const DIALOG_STAGES = [
     "😊 heads up, meeting starting soon!",
@@ -37,6 +38,7 @@ module.exports = {
   LOOK_AHEAD_MINUTES,
   PAUSE_BETWEEN_BARKS_SECONDS,
   CALENDARS_TO_EXCLUDE,
+  EVENTS_TO_EXCLUDE,
   MEETING_QUESTIONS,
   VERBAL_ALERTS,
   IS_TESTING,
