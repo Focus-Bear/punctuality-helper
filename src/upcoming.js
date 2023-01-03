@@ -27,7 +27,7 @@ function syncCalendarsToUpcoming() {
 
 function shouldIgnoreEvent(eventToCheck) {
   return EVENTS_TO_EXCLUDE.some((eventPhraseToExclude) => {
-    return eventToCheck.summary?.toLowerCase?.includes();
+    return eventToCheck?.summary?.toLowerCase()?.includes();
   })
 }
 
