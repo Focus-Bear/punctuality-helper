@@ -35,12 +35,12 @@ function stopBarking() {
   clearInterval(barking);
 }
 
-async function showMeetingAlert(evt, line, givingUpAfter) {
+async function showMeetingAlert(evt, line, givingUpAfter, showImage=false) {
   const title = evt.summary + ' ' + evt.startDate,
     text = [line, '\n', evt.location, evt.url].join('\n'),
     buttons = MEETING_ACTION_BUTTONS;
 
-  return await showDialog(title, text, buttons, givingUpAfter);
+  return await showDialog(title, text, buttons, givingUpAfter, showImage);
 }
 
 function calculateProximity(evt, now) {
@@ -74,7 +74,7 @@ async function notifyUser(evt) {
     console.log({line, lastRow, givingUpAfter})
     if (lastRow && !barking) startBarking(evt);
 
-    const answer = await showMeetingAlert(evt, line, givingUpAfter),
+    const answer = await showMeetingAlert(evt, line, givingUpAfter, true), // lastRow),
       [present] = MEETING_ACTION_BUTTONS;
     console.log({answer})
 
