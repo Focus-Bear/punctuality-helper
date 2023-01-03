@@ -15,10 +15,8 @@ const {
 const quickInterval = QUICK_NAP_DURATION_SECONDS * 1000,
   slowInterval = SLOW_NAP_DURATION_MINUTES * 60_000;
 
-const say= require("./src/applescript/say.js")
-
 async function main() {
- console.log("Late No More Online..");
+  console.log("Late No More Online..");
   if (IS_TESTING) await addTestEvents();
   else syncCalendarsToUpcoming();
   checkUpcomingForMeetings();
