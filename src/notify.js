@@ -35,7 +35,7 @@ function stopBarking() {
     clearInterval(barking)
 }
 
-async function showMeetingAlert(evt, line, givingUpAfter) {
+async function showMeetingAlert(evt, line, givingUpAfter, showImage = false) {
     const title = `Late No More: ${evt.summary} ${evt.startDate}`,
         text = [line, '\n', evt.location, evt.url].join('\n'),
         buttons = MEETING_ACTION_BUTTONS
