@@ -2,6 +2,7 @@ const exec = require("./exec.js"),
   { GET_ALL_EVENTS } = require("./scripts.js");
 
 const { CALENDARS_TO_EXCLUDE } = require("../../config.js");
+const { SCRIPT_HEADER } = require("./scripts.js");
 
 async function getCalendars() {
   return await exec(allCalendars);
@@ -32,13 +33,15 @@ function tidyEvent(evt) {
 }
 
 module.exports = async function getEvents() {
-  const rawEvents = await exec(GET_ALL_EVENTS),
+  const rawEvents = await exec(SCRIPT_HEADER + GET_ALL_EVENTS),
     withOutBlanks = rawEvents.filter((e) => e.length),
     tidied = withOutBlanks.map(tidyEvent);
 
   return tidied.filter(({ calendarName: name }) => {
     if (CALENDARS_TO_EXCLUDE.includes(name)) {
-      console.log(`Ignoring ${name} because it is in one of the excluded calendars`)
+      console.log(
+        `Ignoring ${name} because it is in one of the excluded calendars`
+      );
       return false;
     }
     return true;
