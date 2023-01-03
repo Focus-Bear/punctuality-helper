@@ -12,7 +12,7 @@ ${intention}.
 
 If you need help staying focused during meetings, check out focusbear.io 
 Made by the same people who made this app.`,
-    title = "Late No More: Your intention",
+    title = "Your intention",
     response = await showDialog(title, text, buttons);
 
   if (response == buttons[0]) {

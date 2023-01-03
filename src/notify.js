@@ -35,7 +35,7 @@ function stopBarking() {
 }
 
 async function showMeetingAlert(evt, line, givingUpAfter) {
-  const title = `Late No More: ${evt.summary} ${evt.startDate}`,
+  const title = evt.summary + ' ' + evt.startDate,
     text = [line, '\n', evt.location, evt.url].join('\n'),
     buttons = MEETING_ACTION_BUTTONS;
 
@@ -50,7 +50,7 @@ function calculateProximity(evt, now) {
 }
 
 async function warnUser(evt) {
-  const title = `Late No More: ${evt.summary} (${evt.calendarName}) is starting in 15 minutes.`,
+  const title = `${evt.summary} (${evt.calendarName}) is starting in 15 minutes.`,
     text = `I'll remind you again ${LOOK_AHEAD_MINUTES} minutes before.`,
     buttons = ['Got it'];
 
