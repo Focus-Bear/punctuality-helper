@@ -9,7 +9,7 @@ async function showDialog(
 ) {
     showIcon = false
     const SCRIPT = ` 
---set theImage to (POSIX file "/Users/Library/Application Support/com.focusbear.latenomore/icon.png") as text
+--set theImage to (POSIX file "~/Library/Application Support/com.focusbear.latenomore/icon.jpeg") as text
 set dialogText to "${text}"                                                                                
 set button1Label to "${buttons[0]}"
 set button2Label to "${buttons[1]}"

@@ -61,24 +61,33 @@ async function warnUser(evt) {
 async function notifyUser(evt) {
     console.log('Notifying user about', evt.summary, evt.startDate)
 
-    const rightNow = new Date(),
-        toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000),
-        perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1))
+    const rightNow = new Date();
+    const toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000);
+    const perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1));
 
     for (let i = 0; i < DIALOG_STAGES.length; i++) {
-        const line = DIALOG_STAGES[i],
-            lastRow = i + 1 == DIALOG_STAGES.length,
-            givingUpAfter = !lastRow ? perStage : 0
+        const line = DIALOG_STAGES[i];
+        const lastRow = i + 1 == DIALOG_STAGES.length;
+        const givingUpAfter = !lastRow ? perStage : 0;
 
-        console.log({ line, lastRow, givingUpAfter })
-        if (lastRow && !barking) startBarking(evt)
+        console.log({ line, lastRow, givingUpAfter, isBarking: !!barking })
+        if (lastRow) {
+            if (barking) {
+                stopBarking();
+            }
+            startBarking(evt)
+        }
 
         const answer = await showMeetingAlert(evt, line, givingUpAfter, true),
             [present] = MEETING_ACTION_BUTTONS
         console.log({ answer })
 
-        if (answer) stopBarking()
-        if (!answer) continue
+        if (answer) {
+            stopBarking();
+        }
+        if (!answer) {
+            continue;
+        }
 
         if (answer == present) {
             if (evt?.url) {

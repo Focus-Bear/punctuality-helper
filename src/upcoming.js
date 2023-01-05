@@ -71,6 +71,7 @@ function checkUpcomingForMeetings() {
 
         // Super late now - stop hassling them
         if (delta <= -10) {
+            console.log('Delta', delta, evt);
             expired.push(evt.uid)
         }
     }
