@@ -20,7 +20,7 @@ function startBarking(evt) {
     const pauseFor = PAUSE_BETWEEN_BARKS_SECONDS * 1000
 
     barking = setInterval(async () => {
-        console.log('in barking interval')
+        console.log('In barking interval...')
         const randomIndex = Math.floor(Math.random() * VERBAL_ALERTS.length),
             dialog = VERBAL_ALERTS[randomIndex],
             preamble = "Meeting, '" + evt.summary + "'.",
@@ -33,6 +33,7 @@ function startBarking(evt) {
 function stopBarking() {
     console.log('Silencing barks')
     clearInterval(barking)
+    barking = false
 }
 
 async function showMeetingAlert(evt, line, givingUpAfter, showImage = false) {
@@ -61,38 +62,32 @@ async function warnUser(evt) {
 async function notifyUser(evt) {
     console.log('Notifying user about', evt.summary, evt.startDate)
 
-    const rightNow = new Date();
-    const toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000);
-    const perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1));
+    const rightNow = new Date()
+    const toGo = Math.floor((new Date(evt.startDate) - rightNow) / 1000)
+    const perStage = Math.floor(toGo / (DIALOG_STAGES.length - 1))
 
     for (let i = 0; i < DIALOG_STAGES.length; i++) {
-        const line = DIALOG_STAGES[i];
-        const lastRow = i + 1 == DIALOG_STAGES.length;
-        const givingUpAfter = !lastRow ? perStage : 0;
+        const line = DIALOG_STAGES[i]
+        const lastRow = i + 1 == DIALOG_STAGES.length
+        const givingUpAfter = !lastRow ? perStage : 0
 
-        console.log({ line, lastRow, givingUpAfter, isBarking: !!barking })
-        if (lastRow) {
-            if (barking) {
-                stopBarking();
-            }
-            startBarking(evt)
-        }
+        if (lastRow && barking) stopBarking() // catch edge case where barking misbehaves
+        if (lastRow) startBarking(evt)
 
         const answer = await showMeetingAlert(evt, line, givingUpAfter, true),
             [present] = MEETING_ACTION_BUTTONS
-        console.log({ answer })
 
-        if (answer) {
-            stopBarking();
+        if (!answer?.length) {
+            console.log('no answer, continuing')
+            continue
         }
-        if (!answer) {
-            continue;
-        }
+
+        stopBarking()
 
         if (answer == present) {
             if (evt?.url) {
                 await openMeetingURL(evt.url)
-            } else if (evt?.location && evt.location.startsWith('http')) {
+            } else if (evt?.location?.startsWith('http')) {
                 await openMeetingURL(evt.location)
             }
 
@@ -100,6 +95,7 @@ async function notifyUser(evt) {
                 intention = await askQuestion(question)
 
             await showIntention(intention)
+            break
         }
         await noIntention()
         break
