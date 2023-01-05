@@ -23,12 +23,15 @@ return buttonReturned`
 }
 
 async function askQuestion(questionText) {
-    const SCRIPT = `set dialogText to "${questionText}"
+    const SCRIPT = `
+try    
+set dialogText to "${questionText}"
 set defaultText to "default text"
 set dialogTitle to "Set Your Intention"
 set result to display dialog dialogText default answer defaultText with title dialogTitle
 set userInput to result's text returned
-return userInput`
+return userInput
+end try`
     return await exec(SCRIPT)
 }
 module.exports = { showDialog, askQuestion }
