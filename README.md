@@ -1,6 +1,6 @@
 # Late No More
 
-Checks local iCal via JXA AppleScript & notifies about upcomingEvents meetings.
+Checks local iCal via AppleScript & notifies about upcomingEvents meetings. This repo is for a piece of subfunctionality for the Late No More desktop app. To learn more, visit the [Focus Bear website] (https://focusbear.io).
 
 ## Setup
 
@@ -34,8 +34,3 @@ quickNapDurationMinutes = 0.5, // how often should I check the in-memory list of
 PAUSE_BETWEEN_BARKS_SECONDS = 5, // how many seconds does each line of dialog have to itself
 CALENDARS_TO_EXCLUDE = [], // array of strings, names of calendars
 ```
-
-## Further Reading / Helpful JXA Resources
-
-- https://github.com/JXA-Cookbook/JXA-Cookbook/wiki
-- https://developer.apple.com/library/archive/releasenotes/InterapplicationCommunication/RN-JavaScriptForAutomation/Articles/Introduction.html
