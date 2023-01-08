@@ -13,7 +13,6 @@ function addEvent(evt) {
 }
 
 function removeEvent(evt) {
-    console.log('removeEvent()')
     upcomingEvents = upcomingEvents.filter(({ id }) => evt.id !== id)
     console.log(`Removed ${evt.summary} from upcomingEvents`)
 }
