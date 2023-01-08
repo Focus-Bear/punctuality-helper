@@ -1,6 +1,6 @@
 const { notifyUser, warnUser, calculateProximity } = require('./notify.js')
-const { EVENTS_TO_EXCLUDE } = require('../config.js')
-const getEvents = require('./applescript/calendar.js')
+const { getEvents } = require('./applescript/calendar.js')
+
 
 let upcomingEvents = []
 
@@ -52,14 +52,6 @@ function checkUpcomingForMeetings() {
         const evt = upcomingEvents[i],
             { delta, imminent, soon } = calculateProximity(evt, now)
 
-        if (shouldIgnoreEvent(evt)) {
-            console.log(
-                'Ignoring event because it matches the excluded event list',
-                evt,
-                EVENTS_TO_EXCLUDE
-            )
-        }
-
         if (soon) {
             warnUser(evt)
         }
@@ -71,7 +63,7 @@ function checkUpcomingForMeetings() {
 
         // Super late now - stop hassling them
         if (delta <= -10) {
-            console.log('Delta', delta, evt);
+            console.log('Delta', delta, evt)
             expired.push(evt.uid)
         }
     }
