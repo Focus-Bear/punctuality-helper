@@ -32,9 +32,7 @@ async function setSettings() {
     const { excluded_calendars, excluded_events } = await readSettings()
     await setCalsToExclude(excluded_calendars)
     await setEventsToExclude(excluded_events)
-
-    const fbInstalled = await checkForFocusBearInstall()
-    await setNagState(fbInstalled)
+    await setNagState()
 }
 
 async function main() {
