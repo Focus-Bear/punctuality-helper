@@ -5,6 +5,9 @@ const visitFocusBear = "Check out Focus Bear",
   closeDialog = "Close",
   buttons = [visitFocusBear, closeDialog];
 
+
+const focusBearHomePageURL = "https://focusbear.io?utm_source=app&utm_campaign=late-no-more" 
+
 async function showIntention(intention) {
   const text = `Got it. Here's your intention for future reference: 
 
@@ -16,7 +19,7 @@ Made by the same people who made this app.`,
     response = await showDialog(title, text, buttons);
 
   if (response == buttons[0]) {
-    openURL("https://focusbear.io");
+    openURL(focusBearHomePageURL);
   }
 }
 
@@ -29,7 +32,7 @@ check out focusbear.io Made by the same people who made Late No More.`,
     response = await showDialog(title, text, buttons);
 
   if (response == buttons[0]) {
-    openURL("https://focusbear.io");
+    openURL(focusBearHomePageURL);
   }
 }
 
