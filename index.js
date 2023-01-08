@@ -45,6 +45,7 @@ async function main() {
 
     setInterval(checkUpcomingForMeetings, quickInterval)
     setInterval(syncCalendarsToUpcoming, slowInterval)
+    setInterval(setNagState, 1000 * 60 * 60 * 24)
 }
 
 main()
