@@ -7,15 +7,14 @@ async function showDialog(
     givingUpAfter = 30,
     showIcon = false
 ) {
-    showIcon = false
     const SCRIPT = ` 
---set theImage to ((path to downloads folder ) & "logo.png") as string 
+
 set dialogText to "${text}"                                                                                
 set button1Label to "${buttons[0]}"
 set button2Label to "${buttons[1]}"
 set timeoutValue to ${givingUpAfter} 
 set result to (display dialog dialogText with title "${title}" buttons {button1Label, button2Label} default button button1Label giving up after ${givingUpAfter} ${
-        showIcon ? 'with icon file theImage' : ''
+        showIcon ? 'with icon alias ((path to application support from user domain as text) & "com.focusbear.latenomore:icon.png")' : ''
     })
 set buttonReturned to result's button returned
 return buttonReturned`
