@@ -38,7 +38,6 @@ function matchServices(evt) {
          
 
 function tidyEvent(evt) {
-    console.log('tidyEvent')
     const tidy = evt.map((field) => {
         if (field == 'missing value') return null
         return field
