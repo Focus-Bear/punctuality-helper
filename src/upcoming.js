@@ -2,7 +2,8 @@ const { notifyUser, warnUser, calculateProximity } = require('./notify.js')
 const { getEvents } = require('./applescript/calendar.js')
 
 let upcomingEvents = [],
-    expired = []
+    expired = [],
+    looming = [];
 
 function setUpcoming(evts) {
     upcomingEvents = evts
@@ -14,6 +15,7 @@ function addEvent(evt) {
 
 async function removeEvent(evt) {
     expired.push(evt)
+    looming = looming.filter(id => evt.id !== id)
     upcomingEvents = upcomingEvents.filter(({ id }) => evt.id !== id)
 }
 
@@ -43,7 +45,9 @@ async function checkUpcomingForMeetings() {
         const evt = upcomingEvents[i],
             { delta, imminent, soon } = calculateProximity(evt, now)
 
-        if (soon) {
+
+        if (soon && !looming.includes(evt.id)) {
+            looming.push(evt.id)
             warnUser(evt)
         }
 
