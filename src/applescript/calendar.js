@@ -6,11 +6,11 @@ const { SCRIPT_HEADER } = require('./scripts.js')
 let EVENTS_TO_EXCLUDE, CALENDARS_TO_EXCLUDE
 
 async function setCalsToExclude(calList) {
-    console.log("setting CALENDARS_TO_EXCLUDE",calList )
+    console.log('setting CALENDARS_TO_EXCLUDE', calList)
     CALENDARS_TO_EXCLUDE = calList
 }
 async function setEventsToExclude(eventList) {
-    console.log("setting EVENTS_TO_EXCLUDE", eventList)
+    console.log('setting EVENTS_TO_EXCLUDE', eventList)
     EVENTS_TO_EXCLUDE = eventList
 }
 
@@ -22,7 +22,23 @@ function tidyDate(date) {
     return new Date(date.split(',').slice(1).join(',').replace(' at', ''))
 }
 
+function matchServices(evt) {
+    const { description } = evt
+
+    const isGoogleMeet = description.includes('google.com'),
+        isMsftTeams = description.includes('microsoft.com')
+
+    if (isMsftTeams || isGoogleMeet) {
+        const regex = /https\S*\s/,
+            [url] = description.match(regex)
+        return { ...evt, url: url.trim() }
+    }
+    return evt
+}
+         
+
 function tidyEvent(evt) {
+    console.log('tidyEvent')
     const tidy = evt.map((field) => {
         if (field == 'missing value') return null
         return field
@@ -30,7 +46,7 @@ function tidyEvent(evt) {
 
     const [summary, start, end, url, loc, desc, id, calName] = tidy
 
-    return {
+    const obj = {
         summary,
         calendarName: calName,
         startDate: tidyDate(start),
@@ -40,6 +56,7 @@ function tidyEvent(evt) {
         url,
         id,
     }
+    return matchServices(obj)
 }
 
 function filterArray(sourceList, filterBy, key) {
