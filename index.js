@@ -28,7 +28,6 @@ const {
 const { setNagState } = require('./src/intention.js')
 
 async function setSettings() {
-    const obj = await readSettings()
     const { excluded_calendars, excluded_events } = await readSettings()
     await setCalsToExclude(excluded_calendars)
     await setEventsToExclude(excluded_events)
