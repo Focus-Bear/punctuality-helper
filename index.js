@@ -7,10 +7,11 @@ const addTestEvents = require('./src/testing/index.js'),
     } = require('./src/upcoming.js')
 
 const {
-    SLOW_NAP_DURATION_MINUTES,
-    QUICK_NAP_DURATION_SECONDS,
-    IS_TESTING,
-} = require('./config.js')
+        SLOW_NAP_DURATION_MINUTES,
+        QUICK_NAP_DURATION_SECONDS,
+        IS_TESTING,
+    } = require('./config.js'),
+    ONE_DAY_IN_MILLI_SECONDS = 1000 * 60 * 60 * 24
 
 const quickInterval = QUICK_NAP_DURATION_SECONDS * 1000,
     slowInterval = SLOW_NAP_DURATION_MINUTES * 60_000
@@ -44,7 +45,7 @@ async function main() {
 
     setInterval(checkUpcomingForMeetings, quickInterval)
     setInterval(syncCalendarsToUpcoming, slowInterval)
-    setInterval(setNagState, 1000 * 60 * 60 * 24)
+    setInterval(setNagState, ONE_DAY_IN_MILLI_SECONDS)
 }
 
 main()
